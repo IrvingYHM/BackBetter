@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const clienteController = require('../controllers/cliente.controller');
 const recuperarController = require('../controllers/recuperar.controller');
+const verificarRespuesta = require('../controllers/recuperar.controller');
+
 
 // Ruta para obtener todos los clientes
 router.get('/', clienteController.getAllClientes);
@@ -12,5 +14,6 @@ router.post('/', clienteController.createCliente);
 
 // Ruta para recuperar contraseña
 router.post('/recuperar-contrasena', recuperarController.recuperarContrasena);
+router.post("/verificar-respuesta", recuperarController.verificarRespuesta);
 
 module.exports = router;
