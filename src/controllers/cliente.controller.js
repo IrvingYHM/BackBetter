@@ -1,5 +1,5 @@
 const Cliente = require("../db/models/cliente.model");
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Controlador para obtener todos los clientes
 async function getAllClientes(req, res) {
