@@ -5,7 +5,7 @@ const setupModels = require("../db/models");
 const sequelize = new Sequelize(process.env.MYSQL_URL, {
   dialect: "mysql",
   define: {
-    timestamps: false // Si la tabla no tiene campos de timestamp, puedes omitir esta línea
+    timestamps: false // Si la tabla no tiene campos de timestamp, puedes omitir esta l
   }
 });
 
