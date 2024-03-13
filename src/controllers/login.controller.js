@@ -22,7 +22,14 @@ async function login(req, res) {
             return res.status(401).json({ message: 'Contraseña incorrecta' });
         }        
         // Generar un token de autenticación
-        const token = jwt.sign({ clienteId: cliente.intClvCliente }, 'secreto', { expiresIn: '1h' });
+        const token = jwt.sign({ 
+            clienteId: cliente.intClvCliente,
+            nombre: cliente.vchNomCliente,
+            apellidoPaterno: cliente.vchAPaterno,
+            apellidoMaterno: cliente.vchAMaterno,
+            userType: 'cliente' // Agregar el userType aquí
+        }, 'secreto', { expiresIn: '1h' });
+        console.log(token)
         
         // Enviar el token como respuesta
         res.json({ token });

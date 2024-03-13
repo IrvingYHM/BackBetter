@@ -4,6 +4,9 @@ const cors = require('cors');
 const clienteRouter = require('./routes/cliente.router');
 const authRouter = require('./routes/login.route'); // Importa el enrutador de autenticación
 
+const Empleado = require('./routes/Empleados.router');
+const Producto = require('./routes/productos.route');
+
 dotenv.config();
 const app = express();
 
@@ -22,6 +25,8 @@ const routerApi = require('./routes');
 // Rutas de cliente
 app.use('/clientes', clienteRouter);
 app.use('/auth', authRouter); // Usa el enrutador de autenticación en la ruta /auth
+app.use('/empleados', Empleado);
+app.use('/productos', Producto)
 
 
 const port = process.env.PORT || 3000;

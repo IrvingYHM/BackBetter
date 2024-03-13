@@ -79,12 +79,13 @@ CREATE TABLE `tblclientes` (
   `intIdColonia` int(11) NOT NULL,
   `vchPreguntaSecreta` varchar(255) DEFAULT NULL,
   `vchRespuestaSecreta` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`intClvCliente`)
+  PRIMARY KEY (`intClvCliente`),
+  KEY `intIdColonia` (`intIdColonia`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `tblclientes` */
 
-insert  into `tblclientes`(`intClvCliente`,`vchNomCliente`,`vchAPaterno`,`vchAMaterno`,`vchCorreo`,`chrSexo`,`dtFechaNacimiento`,`vchTelefono`,`vchPassword`,`Calle`,`intIdColonia`,`vchPreguntaSecreta`,`vchRespuestaSecreta`) values (1,'Julio Cesar','Salazar','Hernandez','20210709@uthh.edu.mx','M','2003-05-15','7712036621','12345678','Valle del encinal',1,'¿El nombre de tu mejor amigo?','Angel');
+insert  into `tblclientes`(`intClvCliente`,`vchNomCliente`,`vchAPaterno`,`vchAMaterno`,`vchCorreo`,`chrSexo`,`dtFechaNacimiento`,`vchTelefono`,`vchPassword`,`Calle`,`intIdColonia`,`vchPreguntaSecreta`,`vchRespuestaSecreta`) values (1,'Julio Cesar','Salazar','Hernandez','20210709@uthh.edu.mx','M','2003-05-15','7712036621','$2a$10$9TAu5lGRdFWzjS7Z5bGf4ORtuEEin7RVjP0JTHzeOtNxYAGLNyLGa','Valle del encinal',0,'¿El nombre de tu mejor amigo?','Angel');
 
 /*Table structure for table `tblcodigos_recuperacion` */
 
@@ -92,15 +93,15 @@ DROP TABLE IF EXISTS `tblcodigos_recuperacion`;
 
 CREATE TABLE `tblcodigos_recuperacion` (
   `IdCodigoRecuperacion` int(11) NOT NULL AUTO_INCREMENT,
-  `IdCliente` int(11) NOT NULL,
-  `Codigo` varchar(255) NOT NULL,
-  `FechaExpiracion` datetime NOT NULL,
-  PRIMARY KEY (`IdCodigoRecuperacion`),
-  KEY `IdCliente` (`IdCliente`),
-  CONSTRAINT `tblcodigos_recuperacion_ibfk_1` FOREIGN KEY (`IdCliente`) REFERENCES `tblclientes` (`intClvCliente`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `Codigo` varchar(255) DEFAULT NULL,
+  `HoraExpiracion` time NOT NULL,
+  `Correo_electronico` varchar(255) NOT NULL,
+  PRIMARY KEY (`IdCodigoRecuperacion`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `tblcodigos_recuperacion` */
+
+insert  into `tblcodigos_recuperacion`(`IdCodigoRecuperacion`,`Codigo`,`HoraExpiracion`,`Correo_electronico`) values (1,'262508','23:11:39','20210709@uthh.edu.mx'),(2,'300503','22:20:53','20210709@uthh.edu.mx');
 
 /*Table structure for table `tblcolonia` */
 
@@ -111,9 +112,36 @@ CREATE TABLE `tblcolonia` (
   `NombreColonia` varchar(255) DEFAULT NULL,
   `idCiudad` int(11) DEFAULT NULL,
   PRIMARY KEY (`IdColonia`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `tblcolonia` */
+
+insert  into `tblcolonia`(`IdColonia`,`NombreColonia`,`idCiudad`) values (1,'Valle del encinal',NULL);
+
+/*Table structure for table `tblempleado` */
+
+DROP TABLE IF EXISTS `tblempleado`;
+
+CREATE TABLE `tblempleado` (
+  `intClvEmpleado` int(11) NOT NULL AUTO_INCREMENT,
+  `vchNombre` varchar(255) NOT NULL,
+  `vchAPaterno` varchar(255) NOT NULL,
+  `vchAMaterno` varchar(255) NOT NULL,
+  `vchCorreo` varchar(100) NOT NULL,
+  `dtFechaNacimiento` datetime NOT NULL,
+  `vchTelefono` varchar(50) NOT NULL,
+  `chrSexo` char(1) NOT NULL,
+  `enEstado` enum('DISPONIBLE','OCUPADO','NO DISPONIBLE') NOT NULL,
+  `vchPassword` varchar(200) NOT NULL,
+  `vchPreguntaSecreta` varchar(100) NOT NULL,
+  `vchRespuestaSecreta` varchar(100) NOT NULL,
+  `Calle` varchar(100) NOT NULL,
+  PRIMARY KEY (`intClvEmpleado`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+/*Data for the table `tblempleado` */
+
+insert  into `tblempleado`(`intClvEmpleado`,`vchNombre`,`vchAPaterno`,`vchAMaterno`,`vchCorreo`,`dtFechaNacimiento`,`vchTelefono`,`chrSexo`,`enEstado`,`vchPassword`,`vchPreguntaSecreta`,`vchRespuestaSecreta`,`Calle`) values (1,'Juan','Pérez','López','juanperez@hotmail.com','1990-01-01 00:00:00','1234567890','M','DISPONIBLE','$2a$10$T39i2ANDOOZRg0d1K28caOPgXN4D9EC2tD9GPvfsNETFH.TuPvNaS','¿Cuál es el nombre de tu mascota?','Firulais','Calle 123');
 
 /*Table structure for table `tblestado` */
 
@@ -183,11 +211,11 @@ CREATE TABLE `tblproductos` (
   `vchNomImagen` varchar(30) NOT NULL,
   `vchDescripcion` varchar(100) NOT NULL,
   PRIMARY KEY (`IdProducto`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*Data for the table `tblproductos` */
 
-insert  into `tblproductos`(`IdProducto`,`vchNombreProducto`,`vchNomImagen`,`vchDescripcion`) values (1,'Lentes de sol','','Lentes de sol 100% original');
+insert  into `tblproductos`(`IdProducto`,`vchNombreProducto`,`vchNomImagen`,`vchDescripcion`) values (1,'Lentes de sol','','Lentes de sol 100% original'),(2,'Lentes de sol','imagen.png','Lentes solo para el sol xd'),(3,'Lentes opticos','imagen2.png','Lentes opticos xd');
 
 /*Table structure for table `tblvaloracion` */
 

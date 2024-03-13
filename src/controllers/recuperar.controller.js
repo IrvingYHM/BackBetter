@@ -6,7 +6,7 @@ const CodigoRecuperacion = require("../db/models/codigo_model");
 
 let correoRecuperar; // Variable para almacenar el correo electrónico a recuperar
 let codigoRecuperacion; // Variable para almacenar el código de recuperación
-
+//
 async function recuperarContrasena(req, res) {
   const { vchCorreo } = req.body;
 
