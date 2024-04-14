@@ -1,6 +1,7 @@
 const Cliente = require("../db/models/cliente.model");
 const bcrypt = require('bcryptjs');
 
+
 // Controlador para obtener todos los clientes o filtrar por correo electrónico
 async function getAllClientes(req, res) {
   const { email } = req.query; // Obtener el parámetro de consulta de correo electrónico
@@ -69,3 +70,5 @@ module.exports = {
   getAllClientes,
   createCliente,
 };
+
+
