@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemadesigner version="6.5">
+<source>
+<database charset="utf8mb4" collation="utf8mb4_general_ci">opticenter</database>
+</source>
+<canvas zoom="50">
+<tables>
+<table name="tblcarrito" view="colnames">
+<left>1441</left>
+<top>438</top>
+<width>140</width>
+<height>140</height>
+<sql_create_table>CREATE TABLE `tblcarrito` (
+  `IdCarrito` int(10) NOT NULL AUTO_INCREMENT,
+  `IdProducto` int(10) NOT NULL,
+  `IdVenta` int(10) NOT NULL,
+  `IdCliente` int(10) NOT NULL,
+  `EstadoCarrito` varchar(250) NOT NULL DEFAULT 'Activo, Pendiente, Completado',
+  PRIMARY KEY (`IdCarrito`),
+  KEY `IdProducto` (`IdProducto`),
+  KEY `IdCliente` (`IdCliente`),
+  KEY `IdVenta` (`IdVenta`),
+  CONSTRAINT `tblcarrito_ibfk_2` FOREIGN KEY (`IdProducto`) REFERENCES `tblproductos` (`IdProducto`),
+  CONSTRAINT `tblcarrito_ibfk_3` FOREIGN KEY (`IdCliente`) REFERENCES `tblclientes` (`intClvCliente`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblcategorias" view="colnames">
+<left>1112</left>
+<top>8</top>
+<width>205</width>
+<height>120</height>
+<sql_create_table>CREATE TABLE `tblcategorias` (
+  `IdCategoria` int(11) NOT NULL AUTO_INCREMENT,
+  `NombreCategoria` varchar(50) NOT NULL,
+  PRIMARY KEY (`IdCategoria`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblcita" view="colnames">
+<left>1198</left>
+<top>558</top>
+<width>150</width>
+<height>190</height>
+<sql_create_table>CREATE TABLE `tblcita` (
+  `IdCita` int(5) NOT NULL AUTO_INCREMENT,
+  `Fecha` date NOT NULL,
+  `Hora` time NOT NULL,
+  `idCliente` int(11) NOT NULL,
+  `TipoCita` varchar(250) NOT NULL,
+  `Costo` float(10,2) NOT NULL,
+  `EstadoCita` varchar(100) NOT NULL,
+  `Observaciones` varchar(255) NOT NULL,
+  PRIMARY KEY (`IdCita`),
+  KEY `idCliente` (`idCliente`),
+  CONSTRAINT `tblcita_ibfk_1` FOREIGN KEY (`idCliente`) REFERENCES `tblclientes` (`intClvCliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblclientes" view="colnames">
+<left>952</left>
+<top>346</top>
+<width>160</width>
+<height>240</height>
+<sql_create_table>CREATE TABLE `tblclientes` (
+  `intClvCliente` int(11) NOT NULL AUTO_INCREMENT,
+  `vchNomCliente` varchar(30) NOT NULL,
+  `vchAPaterno` varchar(30) NOT NULL,
+  `vchAMaterno` varchar(30) NOT NULL,
+  `vchCorreo` varchar(50) NOT NULL,
+  `chrSexo` char(1) NOT NULL,
+  `dtFechaNacimiento` date NOT NULL,
+  `vchTelefono` varchar(10) NOT NULL,
+  `vchPassword` varchar(200) NOT NULL,
+  `vchPreguntaSecreta` varchar(255) DEFAULT NULL,
+  `vchRespuestaSecreta` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`intClvCliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblcodigos_recuperacion" view="colnames">
+<left>499</left>
+<top>580</top>
+<width>210</width>
+<height>110</height>
+<sql_create_table>CREATE TABLE `tblcodigos_recuperacion` (
+  `IdCodigoRecuperacion` int(11) NOT NULL AUTO_INCREMENT,
+  `Codigo` varchar(255) DEFAULT NULL,
+  `HoraExpiracion` time NOT NULL,
+  `Correo_electronico` varchar(255) NOT NULL,
+  PRIMARY KEY (`IdCodigoRecuperacion`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tbldetallepedido" view="colnames">
+<left>399</left>
+<top>0</top>
+<width>160</width>
+<height>90</height>
+<sql_create_table>CREATE TABLE `tbldetallepedido` (
+  `IdDetallePedido` int(10) NOT NULL AUTO_INCREMENT,
+  `IdProducto` int(10) NOT NULL,
+  `IdPedido` int(10) NOT NULL,
+  `Cantidad` int(10) NOT NULL,
+  PRIMARY KEY (`IdDetallePedido`),
+  KEY `IdProductos` (`IdProducto`),
+  KEY `IdVentas` (`IdPedido`),
+  CONSTRAINT `tbldetallepedido_ibfk_1` FOREIGN KEY (`IdPedido`) REFERENCES `tblpedido` (`IdPedido`),
+  CONSTRAINT `tbldetallepedido_ibfk_2` FOREIGN KEY (`IdProducto`) REFERENCES `tblproductos` (`IdProducto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tbldirec_client" view="colnames">
+<left>774</left>
+<top>564</top>
+<width>150</width>
+<height>185</height>
+<sql_create_table>CREATE TABLE `tbldirec_client` (
+  `IdDirec_Client` int(10) NOT NULL AUTO_INCREMENT,
+  `Colonia` varchar(255) NOT NULL,
+  `Municipio` varchar(255) NOT NULL,
+  `Estado` varchar(255) NOT NULL,
+  `CP` int(10) NOT NULL,
+  `Calle` varchar(255) NOT NULL,
+  `Referencia` varchar(255) DEFAULT NULL,
+  `IdCliente` int(10) NOT NULL,
+  PRIMARY KEY (`IdDirec_Client`),
+  KEY `IdCliente` (`IdCliente`),
+  CONSTRAINT `tbldirec_client_ibfk_1` FOREIGN KEY (`IdCliente`) REFERENCES `tblclientes` (`intClvCliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tbldirec_emp" view="colnames">
+<left>264</left>
+<top>395</top>
+<width>150</width>
+<height>160</height>
+<sql_create_table>CREATE TABLE `tbldirec_emp` (
+  `IdDirec_Emp` int(10) NOT NULL AUTO_INCREMENT,
+  `Estado` varchar(255) NOT NULL,
+  `Municipio` varchar(255) NOT NULL,
+  `Colonia` varchar(255) NOT NULL,
+  `Calle` varchar(255) NOT NULL,
+  `CP` int(10) NOT NULL,
+  PRIMARY KEY (`IdDirec_Emp`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblempleado" view="colnames">
+<left>19</left>
+<top>400</top>
+<width>155</width>
+<height>190</height>
+<sql_create_table>CREATE TABLE `tblempleado` (
+  `intClvEmpleado` int(11) NOT NULL AUTO_INCREMENT,
+  `vchNombre` varchar(255) NOT NULL,
+  `vchAPaterno` varchar(255) NOT NULL,
+  `vchAMaterno` varchar(255) NOT NULL,
+  `vchCorreo` varchar(100) NOT NULL,
+  `dtFechaNacimiento` datetime NOT NULL,
+  `vchTelefono` varchar(50) NOT NULL,
+  `chrSexo` char(1) NOT NULL,
+  `EstadoEmp` enum('DISPONIBLE','OCUPADO','NO DISPONIBLE') NOT NULL,
+  `vchPassword` varchar(200) NOT NULL,
+  `vchPreguntaSecreta` varchar(100) NOT NULL,
+  `vchRespuestaSecreta` varchar(100) NOT NULL,
+  `IdDireccion` int(10) NOT NULL,
+  PRIMARY KEY (`intClvEmpleado`),
+  KEY `IdDireccion` (`IdDireccion`),
+  CONSTRAINT `tblempleado_ibfk_1` FOREIGN KEY (`IdDireccion`) REFERENCES `tbldirec_emp` (`IdDirec_Emp`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblenvio" view="colnames">
+<left>174</left>
+<top>35</top>
+<width>165</width>
+<height>125</height>
+<sql_create_table>CREATE TABLE `tblenvio` (
+  `IdEnvio` int(10) NOT NULL AUTO_INCREMENT,
+  `IdPedido` int(10) NOT NULL,
+  `IdEstado_Envio` int(10) NOT NULL,
+  `Guia` varchar(50) NOT NULL,
+  PRIMARY KEY (`IdEnvio`),
+  KEY `IdPedido` (`IdPedido`),
+  KEY `IdEstado_Envio` (`IdEstado_Envio`),
+  CONSTRAINT `tblenvio_ibfk_1` FOREIGN KEY (`IdPedido`) REFERENCES `tblpedido` (`IdPedido`),
+  CONSTRAINT `tblenvio_ibfk_2` FOREIGN KEY (`IdEstado_Envio`) REFERENCES `tblestado_envio` (`IdEstado_Envio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblestado_envio" view="colnames">
+<left>14</left>
+<top>219</top>
+<width>140</width>
+<height>125</height>
+<sql_create_table>CREATE TABLE `tblestado_envio` (
+  `IdEstado_Envio` int(10) NOT NULL AUTO_INCREMENT,
+  `Nombre` varchar(50) NOT NULL,
+  PRIMARY KEY (`IdEstado_Envio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblestado_pedido" view="colnames">
+<left>489</left>
+<top>419</top>
+<width>180</width>
+<height>125</height>
+<sql_create_table>CREATE TABLE `tblestado_pedido` (
+  `IdEstado_Pedido` int(10) NOT NULL AUTO_INCREMENT,
+  `Nombre` varchar(50) NOT NULL,
+  PRIMARY KEY (`IdEstado_Pedido`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblgraduaciones" view="colnames">
+<left>1358</left>
+<top>130</top>
+<width>195</width>
+<height>130</height>
+<sql_create_table>CREATE TABLE `tblgraduaciones` (
+  `IdGraduacion` int(11) NOT NULL AUTO_INCREMENT,
+  `ValorGraduacion` varchar(50) NOT NULL,
+  PRIMARY KEY (`IdGraduacion`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblmarcas" view="colnames">
+<left>1513</left>
+<top>279</top>
+<width>145</width>
+<height>135</height>
+<sql_create_table>CREATE TABLE `tblmarcas` (
+  `IdMarca` int(11) NOT NULL AUTO_INCREMENT,
+  `NombreMarca` varchar(50) NOT NULL,
+  PRIMARY KEY (`IdMarca`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblmetodopago" view="colnames">
+<left>415</left>
+<top>265</top>
+<width>160</width>
+<height>125</height>
+<sql_create_table>CREATE TABLE `tblmetodopago` (
+  `IdTipoPago` int(11) NOT NULL AUTO_INCREMENT,
+  `TipoPago` varchar(255) DEFAULT NULL,
+  `vchDescripcion` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`IdTipoPago`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblpedido" view="colnames">
+<left>669</left>
+<top>204</top>
+<width>165</width>
+<height>185</height>
+<sql_create_table>CREATE TABLE `tblpedido` (
+  `IdPedido` int(10) NOT NULL AUTO_INCREMENT,
+  `Fecha_Hora` datetime NOT NULL,
+  `IdProducto` int(10) NOT NULL,
+  `IdCliente` int(10) NOT NULL,
+  `TotalPe` float NOT NULL,
+  `IdMetodoPago` int(10) NOT NULL,
+  `IdEstado_Pedido` int(10) NOT NULL,
+  PRIMARY KEY (`IdPedido`),
+  KEY `IdMetodoPago` (`IdMetodoPago`),
+  KEY `IdCliente` (`IdCliente`),
+  KEY `IdProducto` (`IdProducto`),
+  KEY `IdEstado_Pedido` (`IdEstado_Pedido`),
+  CONSTRAINT `tblpedido_ibfk_1` FOREIGN KEY (`IdCliente`) REFERENCES `tblclientes` (`intClvCliente`),
+  CONSTRAINT `tblpedido_ibfk_2` FOREIGN KEY (`IdProducto`) REFERENCES `tblproductos` (`IdProducto`),
+  CONSTRAINT `tblpedido_ibfk_3` FOREIGN KEY (`IdMetodoPago`) REFERENCES `tblmetodopago` (`IdTipoPago`),
+  CONSTRAINT `tblpedido_ibfk_4` FOREIGN KEY (`IdEstado_Pedido`) REFERENCES `tblestado_pedido` (`IdEstado_Pedido`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblproductos" view="colnames">
+<left>837</left>
+<top>42</top>
+<width>185</width>
+<height>210</height>
+<sql_create_table>CREATE TABLE `tblproductos` (
+  `IdProducto` int(11) NOT NULL AUTO_INCREMENT,
+  `vchNombreProducto` varchar(50) NOT NULL,
+  `vchNomImagen` varchar(30) NOT NULL,
+  `vchDescripcion` varchar(100) NOT NULL,
+  `Existencias` float DEFAULT NULL,
+  `Precio` decimal(10,0) DEFAULT NULL,
+  `IdCategoria` int(11) NOT NULL,
+  `IdMarca` int(11) NOT NULL,
+  `IdGraduacion` int(11) NOT NULL,
+  PRIMARY KEY (`IdProducto`),
+  KEY `fk_producto_categoria` (`IdCategoria`),
+  KEY `fk_producto_marca` (`IdMarca`),
+  KEY `fk_producto_graduacion` (`IdGraduacion`),
+  CONSTRAINT `fk_producto_categoria` FOREIGN KEY (`IdCategoria`) REFERENCES `tblcategorias` (`IdCategoria`),
+  CONSTRAINT `fk_producto_graduacion` FOREIGN KEY (`IdGraduacion`) REFERENCES `tblgraduaciones` (`IdGraduacion`),
+  CONSTRAINT `fk_producto_marca` FOREIGN KEY (`IdMarca`) REFERENCES `tblmarcas` (`IdMarca`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+<table name="tblvaloracion" view="colnames">
+<left>1353</left>
+<top>4</top>
+<width>178</width>
+<height>112</height>
+<sql_create_table>CREATE TABLE `tblvaloracion` (
+  `IdVaLPro` int(11) NOT NULL AUTO_INCREMENT,
+  `Comentario` varchar(255) DEFAULT NULL,
+  `Puntuacion` int(11) NOT NULL,
+  `IdProducto` int(11) NOT NULL,
+  PRIMARY KEY (`IdVaLPro`),
+  KEY `IdProducto` (`IdProducto`),
+  CONSTRAINT `tblvaloracion_ibfk_1` FOREIGN KEY (`IdProducto`) REFERENCES `tblproductos` (`IdProducto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci</sql_create_table>
+</table>
+</tables>
+</canvas>
+</schemadesigner>

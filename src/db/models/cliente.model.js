@@ -12,7 +12,7 @@ Cliente.init({
     autoIncrement: true
   },
   vchNomCliente: {
-    type: DataTypes.STRING(30),
+    type: DataTypes.STRING(250),
     allowNull: false
   },
   vchAPaterno: {
@@ -28,7 +28,7 @@ Cliente.init({
     allowNull: false
   },
   chrSexo: {
-    type: DataTypes.CHAR(1),
+    type: DataTypes.STRING(30),
     allowNull: false
   },
   dtFechaNacimiento: {
@@ -43,14 +43,6 @@ Cliente.init({
     type: DataTypes.STRING(200),
     allowNull: false
   },
-  Calle: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
-  intIdColonia: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
   vchPreguntaSecreta: {
     type: DataTypes.STRING(100),
     allowNull: false
@@ -58,7 +50,7 @@ Cliente.init({
   vchRespuestaSecreta: {
     type: DataTypes.STRING(100),
     allowNull: false
-  }
+  },
 }, {
   sequelize,
   modelName: 'Cliente',

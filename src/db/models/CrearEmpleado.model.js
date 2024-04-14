@@ -39,9 +39,9 @@ Empleado.init({
     type: DataTypes.CHAR(1),
     allowNull: false
   },
-  enEstado: {
+  EstadoEmp: {
     type: DataTypes.ENUM('DISPONIBLE', 'OCUPADO', 'NO DISPONIBLE'),
-    allowNull: false
+    allowNull: true
   },
   vchPassword: {
     type: DataTypes.STRING(200),
@@ -52,10 +52,6 @@ Empleado.init({
     allowNull: false
   },
   vchRespuestaSecreta: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
-  Calle: {
     type: DataTypes.STRING(100),
     allowNull: false
   },

@@ -2,7 +2,6 @@ const Cliente = require("../db/models/cliente.model");
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const CodigoRecuperacion = require("../db/models/codigo_model");
-/* const moment = require('moment'); */
 
 let correoRecuperar; // Variable para almacenar el correo electrónico a recuperar
 let codigoRecuperacion; // Variable para almacenar el código de recuperación
@@ -15,34 +14,33 @@ async function recuperarContrasena(req, res) {
     const cliente = await Cliente.findOne({ where: { vchCorreo } });
 
     if (!cliente) {
-      // Si el correo electrónico no existe, enviar un mensaje de error
       return res.status(404).json({ message: 'El correo electrónico no está registrado' });
     }
-
-    // Si el correo electrónico existe, almacenarlo en la variable global
     correoRecuperar = vchCorreo;
 
-    // Enviar un mensaje de éxito
-    res.status(200).json({ message: 'Correo electrónico encontrado. Se enviarán instrucciones para recuperar la contraseña.' });
+
+    const preguntaSecreta = cliente.vchPreguntaSecreta;
+
+    res.status(200).json({ message: 'Correo electrónico encontrado. Se enviarán instrucciones para recuperar la contraseña.', preguntaSecreta });
+    console.log(preguntaSecreta);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al recuperar la contraseña" });
   }
 }
 
+
 async function verificarRespuesta(req, res) {
   const { vchPreguntaSecreta, vchRespuestaSecreta } = req.body;
 
   try {
-    // Verificar si el correo electrónico y la respuesta coinciden en la base de datos
+    console.log('Correo a recuperar:', correoRecuperar);
     const cliente = await Cliente.findOne({ where: { vchCorreo: correoRecuperar, vchPreguntaSecreta, vchRespuestaSecreta } });
 
     if (!cliente) {
-      // Si la respuesta es incorrecta, enviar un mensaje de error
       return res.status(400).json({ message: 'La respuesta secreta es incorrecta' });
     }
 
-    // Si la respuesta es correcta, enviar un mensaje de éxito
     res.status(200).json({ message: 'Respuesta secreta correcta. Puede cambiar la contraseña.' });
   } catch (error) {
     console.error(error);
@@ -78,7 +76,6 @@ async function enviarCodigo(req, res) {
   horaExpiracion.setMinutes(horaExpiracion.getMinutes() + 5);
 
   try {
-    // Código para enviar el correo electrónico con el código de recuperación
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -89,7 +86,7 @@ async function enviarCodigo(req, res) {
 
     let mailOptions = {
       from: 'tu_correo@gmail.com',
-      to: correoRecuperar, // Utiliza el correo almacenado en la variable global
+      to: correoRecuperar, 
       subject: 'Código de recuperación de contraseña',
       text: `Tu código de recuperación de contraseña es: ${codigoRecuperacion}`,
     
@@ -170,11 +167,9 @@ async function verificarCodigo(req, res) {
     const codigoRecuperacionDB = await CodigoRecuperacion.findOne({ where: { Codigo: codigo }});
 
     if (!codigoRecuperacionDB || codigoRecuperacionDB.Correo_electronico !== correoRecuperar) {
-      // Si el código no existe o no corresponde al correo electrónico, enviar un mensaje de error
       return res.status(400).json({ message: 'El código de recuperación es incorrecto' });
     }
 
-    // Si el código es correcto, enviar un mensaje de éxito
     res.status(200).json({ message: 'Código de recuperación correcto. Puede cambiar la contraseña.' });
   } catch (error) {
     console.error(error);
