@@ -36,16 +36,37 @@ app.use(fileupload({
   tempFileDir: './uploads'
 }));
 
-const Productos = require('./db/models/producto.model');
+/* const Productos = require('./db/models/producto.model'); */
+/* const Cliente = require('./db/models/cliente.model');
+const Carritos = require('./db/models/Carrito.model');
+const DetalleCarritos = require('./db/models/DetalleCarrito.model');
+ */
 
-/* // Eliminar la tabla de Productos
-Productos.drop()
+
+// Eliminar la tabla de Productos
+/* Cliente.drop()
+  .then(() => {
+    console.log('Tabla de productos eliminada correctamente');
+  })
+  .catch((error) => {
+    console.error('Error al eliminar la tabla de productos:', error);
+  });
+
+  Carritos.drop()
+  .then(() => {
+    console.log('Tabla de productos eliminada correctamente');
+  })
+  .catch((error) => {
+    console.error('Error al eliminar la tabla de productos:', error);
+  });
+  DetalleCarritos.drop()
   .then(() => {
     console.log('Tabla de productos eliminada correctamente');
   })
   .catch((error) => {
     console.error('Error al eliminar la tabla de productos:', error);
   }); */
+
 
 const routerApi = require('./routes');
 // Rutas de cliente
