@@ -51,6 +51,15 @@ Cliente.init({
     type: DataTypes.STRING(100),
     allowNull: false
   },
+  lockedUntil: {
+    type: DataTypes.DATE,
+    allowNull: true // Puede ser nulo si la cuenta no está bloqueada
+  },
+  intentosLogin: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0 // Inicializar el contador en 0
+  }
 }, {
   sequelize,
   modelName: 'Cliente',

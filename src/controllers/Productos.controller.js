@@ -9,6 +9,11 @@ const cloudinary = require('../services/cloudinari')
 async function getProductos(req, res) {
   try {
     const productos = await Productos.findAll({
+      where: {
+        Existencias: {
+          [Op.gt]: 0, // Utiliza Op.gt (greater than) para obtener solo los productos con Existencias mayores a cero
+        },
+      },
       include: [
         { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
         { model: Marca, as: "marca", attributes: ["NombreMarca"] },
@@ -77,10 +82,19 @@ async function BuscarProducto(req, res) {
           vchNombreProducto: {
             [Op.like]: `%${busqueda}%`,
           },
+          Existencias: {
+            [Op.gt]: 0, // Excluir productos con Existencias igual a cero
+          },
         },
       });
     } else {
-      productos = await Productos.findAll();
+      productos = await Productos.findAll({
+        where: {
+          Existencias: {
+            [Op.gt]: 0, // Excluir productos con Existencias igual a cero
+          },
+        },
+      });
     }
     res.json(productos);
   } catch (error) {
@@ -88,6 +102,7 @@ async function BuscarProducto(req, res) {
     res.status(500).json({ message: "Error al obtener los productos" });
   }
 }
+
 
 async function BuscarProductoPorCategoria(req, res) {
   const { categoria, marca } = req.query;
@@ -181,11 +196,30 @@ const ProductoPorId = async ( req, res ) => {
   }
 }
 
+
+async function updateProductosExistencias(req, res) {
+  try {
+      const { detalleCarrito } = req.body;
+      detalleCarrito.forEach(async (detalle) => {
+          const producto = await Productos.findByPk(detalle.IdProducto);
+          if (producto) {
+              producto.Existencias -= detalle.Cantidad;
+              await producto.save();
+          }
+      });
+      res.json({ message: "Existencias actualizadas correctamente" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error al actualizar las existencias" });
+  }
+}
+
 module.exports = {
   getProductos,
   createProductos,
   BuscarProducto,
   BuscarProductoPorCategoria,
-  ProductoPorId
+  ProductoPorId,
+  updateProductosExistencias
   /*     BuscarProductoPorMarca */
 };

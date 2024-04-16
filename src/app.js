@@ -12,6 +12,12 @@ const Carrito = require('./routes/Carrito.route');
 const paymenRoute = require ('./routes/payment.routes');
 const Graduaciones = require ('./routes/Graduacion.routes');
 const Tratamientos = require ('./routes/Tratamiento.routes');
+const Pedido = require ('./routes/Pedido.routes');
+const DetallePedido = require ('./routes/DetallesPedidos.routes');
+const Logs = require ('./routes/log.routes');
+
+
+
 
 
 
@@ -23,7 +29,7 @@ const app = express();
 // Configurar opciones de CORS
 const corsOptions = {
     origin: '*', // Permitir solicitudes desde cualquier origen
-    methods: ['GET', 'POST'], // Permitir solo los métodos GET y POST
+    methods: ['GET', 'POST', 'DELETE'], // Permitir solo los métodos GET y POST
     allowedHeaders: ['Content-Type', 'Authorization'], // Permitir solo ciertos encabezados
   };
 
@@ -80,6 +86,12 @@ app.use('/Carrito', Carrito)
 app.use('/',paymenRoute);
 app.use('/',Graduaciones);
 app.use('/',Tratamientos);
+app.use('/',Pedido);
+app.use('/',DetallePedido);
+app.use('/',Logs);
+
+
+
 
 
 /* app.cloudinary(); */

@@ -77,7 +77,23 @@ async function VerDetalleCarrito(req, res) {
     }
   }
 
+
+
+async function eliminarDetalleCarrito(req, res) {
+  const { idCarrito } = req.params;
+
+  try {
+    await DetalleCarrito.destroy({ where: { IdCarrito: idCarrito } });
+    res.status(200).json({ message: "Detalle del carrito eliminado exitosamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al eliminar el detalle del carrito" });
+  }
+}
+
+
 module.exports = {
     VerDetalleCarrito,
-    createDetalleCarrito
+    createDetalleCarrito,
+    eliminarDetalleCarrito
 };
