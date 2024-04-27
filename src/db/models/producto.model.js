@@ -2,7 +2,7 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../libs/sequelize');
 const Categoria = require('./Categoria.model'); // Importa el modelo de Categoria
 const Marca = require('./Marca.model'); // Importa el modelo de Marca
-/* const Graduacion = require('./Graduacion.model'); // Importa el modelo de Graduacion */
+const Empleado = require('./CrearEmpleado.model');
 
 class Productos extends Model {}
 
@@ -14,8 +14,12 @@ Productos.init({
     autoIncrement: true
   },
   IdEmpleado: {
-    type: DataTypes.STRING(250), 
-    allowNull: true
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: Empleado,  // Asegúrate de que 'Empleado' esté importado correctamente
+      key: 'intClvEmpleado'
+    }
   },
   vchNombreProducto: {
     type: DataTypes.STRING(255),
@@ -71,9 +75,12 @@ Productos.init({
 });
 
 // Define la relación con la tabla Categoria
+Productos.belongsTo(Empleado, { foreignKey: 'IdEmpleado', as: 'empleado'});
+
 Productos.belongsTo(Categoria, { foreignKey: 'IdCategoria', as: 'categoria' });
 
 Productos.belongsTo(Marca, { foreignKey: 'IdMarca', as: 'marca' });
+
 
 /* Productos.belongsTo(Graduacion, { foreignKey: 'IdGraduacion', as: 'graduacion' }); */
 

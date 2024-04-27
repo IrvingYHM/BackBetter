@@ -8,41 +8,44 @@ async function login(req, res) {
     const { vchCorreo, vchPassword } = req.body;
     try {
         // Buscar al cliente por correo electrónico en la base de datos
-        const cliente = await Cliente.findOne({ where: { vchCorreo } });
+        let cliente = await Cliente.findOne({ where: { vchCorreo } });
         
         if (!cliente) {
             return res.status(404).json({ message: 'Cliente no encontrado' });
         }
-
-        // Verificar si el cliente está bloqueado temporalmente
+        
         if (cliente.lockedUntil && cliente.lockedUntil > new Date()) {
-            const tiempoRestante = Math.ceil((cliente.lockedUntil - new Date()) / 1000 / 60); // Convertir a minutos
-            return res.status(403).json({ message: `Cuenta bloqueada. Intente de nuevo en ${tiempoRestante} minutos` });
+            return res.status(401).json({ message: 'La cuenta está bloqueada. Intente de nuevo más tarde' });
         }
 
         const validPassword = await bcrypt.compare(vchPassword, cliente.vchPassword);
+                // Capturar la dirección IP completa del cliente
+                const ip = requestIp.getClientIp(req);
         
         if (!validPassword) {
-            // Incrementar el contador de intentos de inicio de sesión
-            cliente.intentosLogin = (cliente.intentosLogin || 0) + 1;
-            await cliente.save();
-
-            // Si se supera el máximo de intentos permitidos, bloquear la cuenta temporalmente por 5 minutos
+            cliente.intentosLogin += 1;
             if (cliente.intentosLogin >= 3) {
-                cliente.lockedUntil = new Date(Date.now() + 5 * 60 * 1000); // 5 minutos
-                cliente.intentosLogin = 0; // Reiniciar el contador de intentos
+                cliente.lockedUntil = new Date(Date.now() + 5 * 60 * 1000); // Bloquear la cuenta por 5 minutos
                 await cliente.save();
-
-                return res.status(403).json({ message: `Cuenta bloqueada. Intente de nuevo en 5 minutos` });
+                // Registrar el bloqueo de la cuenta en el log
+                await Log.create({
+                    ip: ip,
+                    url: req.originalUrl,
+                    codigo_estado: 200,
+                    fecha_hora: new Date(),
+                    id_cliente: cliente.intClvCliente,
+                    Accion: "Bloqueo de cuenta por 3 intentos fallidos"
+                });
+                return res.status(401).json({ message: 'Contraseña incorrecta. La cuenta está bloqueada por 5 minutos' });
             }
-
+            await cliente.save();
             return res.status(401).json({ message: 'Contraseña incorrecta' });
         }
 
-        // Restablecer el contador de intentos de inicio de sesión al iniciar sesión exitosamente
+        // Resetear el contador de intentos de login si la contraseña es válida
         cliente.intentosLogin = 0;
         await cliente.save();
-
+        
         // Generar un token de autenticación
         const token = jwt.sign({ 
             clienteId: cliente.intClvCliente,
@@ -52,8 +55,7 @@ async function login(req, res) {
             userType: 'cliente' // Agregar el userType aquí
         }, 'secreto', { expiresIn: '1h' });
 
-        // Capturar la dirección IP completa del cliente
-        const ip = requestIp.getClientIp(req);
+
 
         // Registrar el inicio de sesión en la base de datos
         await Log.create({
@@ -61,7 +63,8 @@ async function login(req, res) {
             url: req.originalUrl,
             codigo_estado: 200,
             fecha_hora: new Date(),
-            id_cliente: cliente.intClvCliente
+            id_cliente: cliente.intClvCliente,
+            Accion: "Inicio de sesion"
         });
 
         res.json({ token });
@@ -70,6 +73,5 @@ async function login(req, res) {
         res.status(500).json({ message: 'Error en el servidor' });
     }
 }
-
-
+ 
 module.exports = { login };

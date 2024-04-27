@@ -1,6 +1,14 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../../libs/sequelize');
-/* const Cliente = require('../cliente.model');
+const Cliente = require('../cliente.model');
+const Paqueteria = require('../Pedido/Paqueteria.model');
+const MetodoPago = require('../Pedido/MetodoPago.model');
+const DireccionCliente = require('../Direc_Client.model');
+const Empleado = require('../CrearEmpleado.model');
+
+
+
+/* 
 const MetodoPago = require('./MetodoPago.model');
 const EstadoPedido = require('./EstadoPedido.model');
 const EstadoEnvio = require('./EstadoEnvio.model');
@@ -63,6 +71,18 @@ Pedido.init({
   tableName: 'tblpedido',
   timestamps: false
 });
+
+
+Pedido.belongsTo(Cliente, { foreignKey: 'IdCliente', as: 'cliente' });
+Pedido.belongsTo(Paqueteria, { foreignKey: 'IdPaqueteria', as: 'paqueteria' });
+Pedido.belongsTo(MetodoPago, { foreignKey: 'IdMetodoPago', as: 'metodoPago' });
+Pedido.belongsTo(DireccionCliente, { foreignKey: 'IdDireccion', as: 'direccionCliente' });
+Pedido.belongsTo(Empleado, { foreignKey: 'IdEmpleado', as: 'Empleado'});
+
+
+
+
+
 /* 
 Pedido.belongsTo(Cliente, { foreignKey: 'IdCliente', as: 'cliente' });
 Pedido.belongsTo(MetodoPago, { foreignKey: 'IdMetodoPago', as: 'metodoPago' });

@@ -2,12 +2,16 @@ const Cliente = require("../db/models/cliente.model");
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const CodigoRecuperacion = require("../db/models/codigo_model");
+const Log = require("../db/models/log/log.model")
+const requestIp = require('request-ip');
+
 
 let correoRecuperar; // Variable para almacenar el correo electrónico a recuperar
 let codigoRecuperacion; // Variable para almacenar el código de recuperación
 //
 async function recuperarContrasena(req, res) {
   const { vchCorreo } = req.body;
+  correoRecuperar = vchCorreo;
 
   try {
     // Verificar si el correo electrónico existe en la base de datos
@@ -16,18 +20,30 @@ async function recuperarContrasena(req, res) {
     if (!cliente) {
       return res.status(404).json({ message: 'El correo electrónico no está registrado' });
     }
-    correoRecuperar = vchCorreo;
 
+    // Obtener la dirección IP del cliente
+    const ip = requestIp.getClientIp(req);
 
-    const preguntaSecreta = cliente.vchPreguntaSecreta;
+    // Obtener el ID del cliente
+    const idCliente = cliente.intClvCliente;
 
-    res.status(200).json({ message: 'Correo electrónico encontrado. Se enviarán instrucciones para recuperar la contraseña.', preguntaSecreta });
-    console.log(preguntaSecreta);
+    // Registro en el log
+    await Log.create({
+      ip: ip,
+      url: req.originalUrl,
+      codigo_estado: 200,
+      fecha_hora: new Date(),
+      id_cliente: idCliente, // Usar el ID del cliente
+      Accion: "Solicitud de recuperación de contraseña"
+    });
+
+    res.status(200).json({ message: 'Correo electrónico encontrado.', preguntaSecreta: cliente.vchPreguntaSecreta });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al recuperar la contraseña" });
   }
 }
+
 
 
 async function verificarRespuesta(req, res) {

@@ -15,6 +15,11 @@ const Tratamientos = require ('./routes/Tratamiento.routes');
 const Pedido = require ('./routes/Pedido.routes');
 const DetallePedido = require ('./routes/DetallesPedidos.routes');
 const Logs = require ('./routes/log.routes');
+const Paqueteria = require ('./routes/Paqueteria.routes');
+const Valoracion = require('./routes/Valoraciones.routes');
+const Direc_Empleado = require('./routes/Direc_Empleado.routes');
+const EstadoEnvio = require('./routes/EstadoEnvio.routes')
+const EstadoPedido  = require('./routes/EstadoPedido.routes')
 
 
 
@@ -29,7 +34,7 @@ const app = express();
 // Configurar opciones de CORS
 const corsOptions = {
     origin: '*', // Permitir solicitudes desde cualquier origen
-    methods: ['GET', 'POST', 'DELETE'], // Permitir solo los métodos GET y POST
+    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATH'], // Permitir solo los métodos GET y POST
     allowedHeaders: ['Content-Type', 'Authorization'], // Permitir solo ciertos encabezados
   };
 
@@ -89,6 +94,12 @@ app.use('/',Tratamientos);
 app.use('/',Pedido);
 app.use('/',DetallePedido);
 app.use('/',Logs);
+app.use('/',Paqueteria);
+app.use('/',Valoracion);
+app.use('/', Direc_Empleado);
+app.use("/", EstadoEnvio);
+app.use("/", EstadoPedido);
+
 
 
 

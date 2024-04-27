@@ -1,6 +1,8 @@
 // db/models/direccion_cliente.model.js
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../../libs/sequelize");
+const Cliente = require('../models/cliente.model');
+
 
 class Direc_Client extends Model {}
 
@@ -56,5 +58,8 @@ Direc_Client.init(
     timestamps: false, // Si la tabla no tiene campos de timestamp, puedes omitir esta línea
   }
 );
+
+Direc_Client.belongsTo(Cliente, { foreignKey: 'IdCliente', as: 'cliente' });
+
 
 module.exports = Direc_Client;

@@ -1,5 +1,10 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../../libs/sequelize');
+const Graduacion = require('../Detalle_carrito/Graduacion.model')
+const Pedido = require('../Pedido/Pedido.model')
+const Tratamiento = require('../Detalle_carrito/Tratamiento.model');
+const Producto = require('../producto.model');
+
 
 class DetallePedido extends Model {}
 
@@ -48,5 +53,10 @@ DetallePedido.init({
   tableName: 'tbldetalle_pedido',
   timestamps: false
 });
+
+DetallePedido.belongsTo(Graduacion,{ foreignKey: 'IdGraduacion', as: 'Graduacion'});
+DetallePedido.belongsTo(Pedido, { foreignKey: 'IdPedido', as: 'Pedido'});
+DetallePedido.belongsTo(Tratamiento, { foreignKey: 'IdTratamiento', as: 'Tratamiento'});
+DetallePedido.belongsTo(Producto, { foreignKey: 'IdProducto', as: 'Producto'});
 
 module.exports = DetallePedido;

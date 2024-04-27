@@ -12,7 +12,7 @@ Log.init({
   },
   ip: {
     type: DataTypes.STRING(255),
-    allowNull: false
+    allowNull: true
   },
   url: {
     type: DataTypes.STRING(255),
@@ -28,8 +28,13 @@ Log.init({
   },
   id_cliente: {
     type: DataTypes.INTEGER,
+    allowNull: true
+  },
+    Accion: {
+    type: DataTypes.INTEGER,
     allowNull: false
-  }
+  },
+
 }, {
   sequelize,
   modelName: 'Log',

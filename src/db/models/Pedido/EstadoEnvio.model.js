@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../sequelize');
+const sequelize = require('../../../libs/sequelize');
 
 class EstadoEnvio extends Model {}
 
@@ -17,7 +17,7 @@ EstadoEnvio.init({
 }, {
   sequelize,
   modelName: 'EstadoEnvio',
-  tableName: 'tblestado_envio',
+  tableName: 'tblEstado_Envio',
   timestamps: false
 });
 

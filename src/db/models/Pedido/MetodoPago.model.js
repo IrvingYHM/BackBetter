@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../sequelize');
+const sequelize = require('../../../libs/sequelize');
 
 class MetodoPago extends Model {}
 

@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../sequelize');
+const sequelize = require('../../../libs/sequelize');
 
 class EstadoPedido extends Model {}
 
@@ -11,13 +11,13 @@ EstadoPedido.init({
     autoIncrement: true
   },
   Nombre: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(255),
     allowNull: false
   }
 }, {
   sequelize,
   modelName: 'EstadoPedido',
-  tableName: 'tblestado_pedido',
+  tableName: 'tblEstado_Pedido',
   timestamps: false
 });
 

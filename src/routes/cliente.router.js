@@ -9,6 +9,9 @@ router.get('/', clienteController.getAllClientes);
 
 // Ruta para crear un nuevo cliente
 router.post('/', clienteController.createCliente);
+router.get('/id/:id', clienteController.getClientePorId);
+router.put('/ids/:id', clienteController.updateCliente);
+
 
 // Ruta para recuperar contraseña
 router.post('/recuperar-contrasena', recuperarController.recuperarContrasena);
