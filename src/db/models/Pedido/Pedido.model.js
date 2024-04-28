@@ -9,12 +9,6 @@ const EstadoPedido = require('./EstadoPedido.model');
 const EstadoEnvio = require('./EstadoEnvio.model');
 
 
-
-/* 
-const MetodoPago = require('./MetodoPago.model');
-const EstadoPedido = require('./EstadoPedido.model');
-); */
-
 class Pedido extends Model {}
 
 Pedido.init({
@@ -81,16 +75,5 @@ Pedido.belongsTo(EstadoPedido, { foreignKey: 'IdEstado_Pedido', as: 'EstadoPedid
 Pedido.belongsTo(EstadoEnvio, { foreignKey: 'IdEstado_Envio', as: 'estadoEnvio'});
 
 
-
-
-
-/* 
-Pedido.belongsTo(Cliente, { foreignKey: 'IdCliente', as: 'cliente' });
-Pedido.belongsTo(MetodoPago, { foreignKey: 'IdMetodoPago', as: 'metodoPago' });
-Pedido.belongsTo(EstadoPedido, { foreignKey: 'IdEstado_Pedido', as: 'estadoPedido' });
-Pedido.belongsTo(EstadoEnvio, { foreignKey: 'IdEstado_Envio', as: 'estadoEnvio' });
-Pedido.belongsTo(DireccionCliente, { foreignKey: 'IdDireccion', as: 'direccionCliente' });
-Pedido.belongsTo(Paqueteria, { foreignKey: 'IdPaqueteria', as: 'paqueteria' });
-Pedido.belongsTo(Empleado, { foreignKey: 'IdEmpleado', as: 'empleado' }); */
 
 module.exports = Pedido;
