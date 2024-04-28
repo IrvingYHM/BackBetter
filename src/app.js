@@ -1,14 +1,14 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const clienteRouter = require('./routes/cliente.router');
-const authRouter = require('./routes/login.route'); // 
+const clienteRouter = require('./routes/cliente.routes');
+const authRouter = require('./routes/login.routes'); // 
 const morgan = require('morgan');
-const Empleado = require('./routes/Empleados.router');
-const Producto = require('./routes/productos.route');
+const Empleado = require('./routes/Empleados.routes');
+const Producto = require('./routes/productos.routes');
 const fileupload = require('express-fileupload');
-const DetalleCarrito = require('./routes/DetalleCarrito.router');
-const Carrito = require('./routes/Carrito.route');
+const DetalleCarrito = require('./routes/DetalleCarrito.routes');
+const Carrito = require('./routes/Carrito.routes');
 const paymenRoute = require ('./routes/payment.routes');
 const Graduaciones = require ('./routes/Graduacion.routes');
 const Tratamientos = require ('./routes/Tratamiento.routes');
@@ -20,13 +20,18 @@ const Valoracion = require('./routes/Valoraciones.routes');
 const Direc_Empleado = require('./routes/Direc_Empleado.routes');
 const EstadoEnvio = require('./routes/EstadoEnvio.routes')
 const EstadoPedido  = require('./routes/EstadoPedido.routes')
+const Cita = require('./routes/Cita.routes');
+const TipoCita = require('./routes/TipoCita.routes');
+const EstadoCita = require('./routes/EstadoCita.routes');
 
 
 
 
 
 
-const direc_ClientRouter = require("./routes/Direc_Client.router");
+
+
+const direc_ClientRouter = require("./routes/Direc_Client.routes");
 
 dotenv.config();
 const app = express();
@@ -99,6 +104,14 @@ app.use('/',Valoracion);
 app.use('/', Direc_Empleado);
 app.use("/", EstadoEnvio);
 app.use("/", EstadoPedido);
+app.use("/", Cita);
+app.use("/", TipoCita);
+app.use("/", EstadoCita);
+
+
+
+
+
 
 
 

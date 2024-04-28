@@ -5,16 +5,15 @@ const Paqueteria = require('../Pedido/Paqueteria.model');
 const MetodoPago = require('../Pedido/MetodoPago.model');
 const DireccionCliente = require('../Direc_Client.model');
 const Empleado = require('../CrearEmpleado.model');
+const EstadoPedido = require('./EstadoPedido.model');
+const EstadoEnvio = require('./EstadoEnvio.model');
 
 
 
 /* 
 const MetodoPago = require('./MetodoPago.model');
 const EstadoPedido = require('./EstadoPedido.model');
-const EstadoEnvio = require('./EstadoEnvio.model');
-const DireccionCliente = require('../Direc_Client.model');
-const Paqueteria = require('./Paqueteria.model');
-const Empleado = require('../CrearEmpleado.model'); */
+); */
 
 class Pedido extends Model {}
 
@@ -78,6 +77,8 @@ Pedido.belongsTo(Paqueteria, { foreignKey: 'IdPaqueteria', as: 'paqueteria' });
 Pedido.belongsTo(MetodoPago, { foreignKey: 'IdMetodoPago', as: 'metodoPago' });
 Pedido.belongsTo(DireccionCliente, { foreignKey: 'IdDireccion', as: 'direccionCliente' });
 Pedido.belongsTo(Empleado, { foreignKey: 'IdEmpleado', as: 'Empleado'});
+Pedido.belongsTo(EstadoPedido, { foreignKey: 'IdEstado_Pedido', as: 'EstadoPedido'});
+Pedido.belongsTo(EstadoEnvio, { foreignKey: 'IdEstado_Envio', as: 'estadoEnvio'});
 
 
 
