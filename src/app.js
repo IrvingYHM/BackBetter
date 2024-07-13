@@ -20,15 +20,11 @@ const Valoracion = require('./routes/Valoraciones.routes');
 const Direc_Empleado = require('./routes/Direc_Empleado.routes');
 const EstadoEnvio = require('./routes/EstadoEnvio.routes')
 const EstadoPedido  = require('./routes/EstadoPedido.routes')
+
 const Cita = require('./routes/Cita.routes');
 const TipoCita = require('./routes/TipoCita.routes');
 const EstadoCita = require('./routes/EstadoCita.routes');
-
-
-
-
-
-
+const Horarios = require("./routes/Horarios.routes");
 
 
 const direc_ClientRouter = require("./routes/Direc_Client.routes");
@@ -104,9 +100,11 @@ app.use('/',Valoracion);
 app.use('/', Direc_Empleado);
 app.use("/", EstadoEnvio);
 app.use("/", EstadoPedido);
-app.use("/", Cita);
+
+app.use("/cita", Cita);
 app.use("/", TipoCita);
 app.use("/", EstadoCita);
+app.use("/horarios", Horarios);
 
 
 

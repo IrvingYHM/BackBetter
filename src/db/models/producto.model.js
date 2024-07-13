@@ -58,6 +58,19 @@ Productos.init({
     type: DataTypes.DECIMAL(10, 0), 
     allowNull: true
   },
+  EnOferta: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+  PrecioOriginal: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true
+  },
+  PrecioOferta: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true
+  },
 
 /*   IdGraduacion: {
     type: DataTypes.INTEGER,

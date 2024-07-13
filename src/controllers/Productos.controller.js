@@ -6,6 +6,8 @@ const Marca = require("../db/models/Marca.model");
 
 const cloudinary = require('../services/cloudinari')
 
+//Ver productos
+
 async function getProductos(req, res) {
   try {
     const productos = await Productos.findAll({
@@ -18,6 +20,30 @@ async function getProductos(req, res) {
         { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
         { model: Marca, as: "marca", attributes: ["NombreMarca"] },
         /*         { model: Graduacion, as: 'graduacion', attributes: ['ValorGraduacion'] } */
+      ],
+    });
+    res.json(productos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los productos" });
+  }
+}
+
+
+//Ver Ofertas
+async function getProductosOfertas(req, res) {
+  try {
+    const productos = await Productos.findAll({
+      where: {
+        Existencias: {
+          [Op.gt]: 0, // Solo productos con Existencias mayores a cero
+        },
+        EnOferta: 1, // Solo productos en oferta
+      },
+      include: [
+        { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
+        { model: Marca, as: "marca", attributes: ["NombreMarca"] },
+        /* { model: Graduacion, as: 'graduacion', attributes: ['ValorGraduacion'] } */
       ],
     });
     res.json(productos);
@@ -216,6 +242,7 @@ async function updateProductosExistencias(req, res) {
 
 module.exports = {
   getProductos,
+  getProductosOfertas,
   createProductos,
   BuscarProducto,
   BuscarProductoPorCategoria,

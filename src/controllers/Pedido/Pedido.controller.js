@@ -6,18 +6,36 @@ const Productos = require('../db/models/producto.model'); // Importar el modelo 
 const Graduacion = require('../db/models/Detalle_carrito/Graduacion.model');
 const Tratamiento = require('../db/models/Detalle_carrito/Tratamiento.model'); */
 
+// Importar los modelos necesarios
+const Cliente = require('../../db/models/cliente.model');
+const Paqueteria = require('../../db/models/Pedido/Paqueteria.model');
+const MetodoPago = require('../../db/models/Pedido/MetodoPago.model');
+const DireccionCliente = require('../../db/models/Direc_Client.model');
+const Empleado = require('../../db/models/CrearEmpleado.model');
+const EstadoPedido = require('../../db/models/Pedido/EstadoPedido.model');
+const EstadoEnvio = require('../../db/models/Pedido/EstadoEnvio.model');
 
-
-// Controlador para obtener todos los clientes
+// Controlador para obtener todos los pedidos con detalles
 async function getAllPedidos(req, res) {
   try {
-    const Pedidos = await Pedido.findAll();
-    res.json(Pedidos);
+    const pedidos = await Pedido.findAll({
+      include: [
+        { model: Cliente, as: 'cliente' },
+        { model: Paqueteria, as: 'paqueteria' },
+        { model: MetodoPago, as: 'metodoPago' },
+        { model: DireccionCliente, as: 'direccionCliente' },
+        { model: Empleado, as: 'Empleado' },
+        { model: EstadoPedido, as: 'EstadoPedido' },
+        { model: EstadoEnvio, as: 'estadoEnvio' }
+      ]
+    });
+    res.json(pedidos);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al obtener los Pedidos" });
+    res.status(500).json({ message: "Error al obtener los pedidos" });
   }
 }
+
 
 async function createPedido(req, res) {
   const { IdCliente } = req.body;
@@ -59,8 +77,50 @@ async function createPedido(req, res) {
   }
 }
 
+async function getPedidoId(req, res) {
+  try {
+    const { IdCliente } = req.query; // Obtener el IdCliente de la consulta
+
+    let pedidos;
+    if (IdCliente) {
+      // Si se proporciona un IdCliente, filtrar los pedidos por ese IdCliente
+      pedidos = await Pedido.findAll({
+        where: { IdCliente },
+        include: [
+          { model: Cliente, as: 'cliente' },
+          { model: Paqueteria, as: 'paqueteria' },
+          { model: MetodoPago, as: 'metodoPago' },
+          { model: DireccionCliente, as: 'direccionCliente' },
+          { model: Empleado, as: 'Empleado' },
+          { model: EstadoPedido, as: 'EstadoPedido' },
+          { model: EstadoEnvio, as: 'estadoEnvio' }
+        ]
+      });
+    } else {
+      // Si no se proporciona un IdCliente, obtener todos los pedidos
+      pedidos = await Pedido.findAll({
+        include: [
+          { model: Cliente, as: 'cliente' },
+          { model: Paqueteria, as: 'paqueteria' },
+          { model: MetodoPago, as: 'metodoPago' },
+          { model: DireccionCliente, as: 'direccionCliente' },
+          { model: Empleado, as: 'Empleado' },
+          { model: EstadoPedido, as: 'EstadoPedido' },
+          { model: EstadoEnvio, as: 'estadoEnvio' }
+        ]
+      });
+    }
+
+    res.json(pedidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los pedidos" });
+  }
+}
+
 
 module.exports = {
     getAllPedidos,
-    createPedido
+    createPedido,
+    getPedidoId
 };

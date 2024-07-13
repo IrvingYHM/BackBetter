@@ -49,7 +49,7 @@ module.exports.createOrder = async (req, res) => {
           failure: "http://localhost:3000/failure",
           pending: "http://localhost:3000/pending",
         }, 
-        notification_url: "https://9471-2806-10a6-10-9986-f8f0-43a0-dff4-9700.ngrok-free.app/webhook",
+        notification_url: "https://79f2-201-97-104-113.ngrok-free.app/webhook",
       });
   
       // Devuelve la URL de inicio de pago en la respuesta

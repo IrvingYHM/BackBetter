@@ -19,5 +19,7 @@ router.post('/cambiar-contrasena', recuperarController.cambiarContraseña);
 router.post("/verificar-respuesta", recuperarController.verificarRespuesta);
 router.post("/Enviar_codigo", recuperarController.enviarCodigo);
 router.post("/Verificacion_codigo", recuperarController.verificarCodigo);
+router.get('/find/:codigoAle', clienteController.findClienteByCodigoAle); // Nueva ruta para buscar cliente por codigoAle
+
 
 module.exports = router;

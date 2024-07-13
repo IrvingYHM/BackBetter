@@ -59,6 +59,10 @@ Cliente.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0 // Inicializar el contador en 0
+  },
+  codigoAle: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
   sequelize,

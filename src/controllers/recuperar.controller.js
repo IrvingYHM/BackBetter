@@ -96,7 +96,7 @@ async function enviarCodigo(req, res) {
       service: 'gmail',
       auth: {
         user: '20210709@uthh.edu.mx', // Coloca tu dirección de correo electrónico
-        pass: 'julce0101' // Coloca tu contraseña
+        pass: 'julce0101' // Coloca tu contraseñas
       }
     });
 

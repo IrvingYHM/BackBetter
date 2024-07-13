@@ -26,6 +26,18 @@ async function getAllClientes(req, res) {
   }
 }
 
+
+// Función para generar un número aleatorio de 4 dígitos
+function generateRandomIdentifier() {
+  return Math.floor(1000 + Math.random() * 9000); // Genera un número aleatorio entre 1000 y 9999
+}
+
+// Función para verificar si un código ya existe en la base de datos
+async function isUniqueCode(code) {
+  const cliente = await Cliente.findOne({ where: { codigoAle: code } });
+  return cliente === null;
+}
+
 // Controlador para crear un nuevo cliente
 async function createCliente(req, res) {
   const {
@@ -38,7 +50,7 @@ async function createCliente(req, res) {
     vchTelefono,
     vchPassword,
     vchPreguntaSecreta,
-    vchRespuestaSecreta, 
+    vchRespuestaSecreta,
   } = req.body;
   try {
     console.log("Contraseña recibida:", vchPassword); // Agregar este log para verificar la contraseña recibida
@@ -48,6 +60,12 @@ async function createCliente(req, res) {
     }
 
     const hashedPassword = await bcrypt.hash(vchPassword, 10);
+
+    // Generar un código aleatorio único
+    let codigoAle;
+    do {
+      codigoAle = generateRandomIdentifier();
+    } while (!(await isUniqueCode(codigoAle)));
 
     const nuevoCliente = await Cliente.create({
       vchNomCliente,
@@ -59,7 +77,8 @@ async function createCliente(req, res) {
       vchTelefono,
       vchPassword: hashedPassword,
       vchPreguntaSecreta,
-      vchRespuestaSecreta, 
+      vchRespuestaSecreta,
+      codigoAle,
     });
 
     // Registro en el log
@@ -79,7 +98,6 @@ async function createCliente(req, res) {
     res.status(500).json({ message: "Error al crear el cliente" });
   }
 }
-
 
 // Controlador traer un cliente por su id
 
@@ -159,12 +177,29 @@ async function updateCliente(req, res) {
 }
 
 
+// Controlador para buscar un cliente por codigoAle
+async function findClienteByCodigoAle(req, res) {
+  const { codigoAle } = req.params;
+  try {
+    const cliente = await Cliente.findOne({ where: { codigoAle: codigoAle } });
+    if (!cliente) {
+      return res.status(404).json({ message: "Cliente no encontrado" });
+    }
+    res.status(200).json(cliente);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al buscar el cliente" });
+  }
+}
+
+
 
 module.exports = {
   getAllClientes,
   createCliente,
   getClientePorId,
-  updateCliente
+  updateCliente,
+  findClienteByCodigoAle
 };
 
 

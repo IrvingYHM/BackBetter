@@ -91,6 +91,50 @@ async function loginEmpleado(req, res) {
   }
 }
 
+
+async function actualizarEmpleado(req,res){
+  const { id } = req.params;
+  const {
+    vchNombre,
+    vchAPaterno,
+    vchAMaterno,
+    vchCorreo,
+    vchTelefono,
+    // Nueva contraseña
+/*     vchPassword, */
+    // Pregunta y respuesta secretas
+/*     vchPreguntaSecreta,
+    vchRespuestaSecreta */
+  } = req.body;
+
+  try {
+    const cliente = await Cliente.findByPk(id);
+    if (!cliente) {
+      return res.status(404).json({ message: "Cliente no encontrado" });
+    }
+    // Actualizar los datos del cliente
+    cliente.vchNombre = vchNombre;
+    cliente.vchAPaterno = vchAPaterno;
+    cliente.vchAMaterno = vchAMaterno;
+    cliente.vchCorreo = vchCorreo;
+    cliente.vchTelefono = vchTelefono;
+    // Actualizar la contraseña si se proporciona una nueva
+/*     if (vchPassword) {
+      cliente.vchPassword = await bcrypt.hash(vchPassword, 10);
+    } */
+
+    // Actualizar la pregunta y respuesta secretas
+/*     cliente.vchPreguntaSecreta = vchPreguntaSecreta;
+    cliente.vchRespuestaSecreta = vchRespuestaSecreta;
+ */
+    await cliente.save();
+    res.json(cliente);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar el cliente" });
+  }
+}
+
 module.exports = {
   getAllEmpleado,
   createEmpleado,
