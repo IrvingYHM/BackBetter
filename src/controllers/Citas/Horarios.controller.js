@@ -40,7 +40,7 @@ const getHorariosPorFecha = async (req, res) => {
   }
 };
 
-// Marcar un horario como no disponible (reservar)
+// Marcar un horario como no disponible (reservar).
 async function reservarHorario(req, res) {
   try {
     const { Fecha, Hora } = req.body;
