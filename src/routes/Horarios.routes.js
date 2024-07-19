@@ -1,14 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const {
-  getAllHorarios,
+  getHorariosDisponibles,
+  getHorariosPorFecha,
+  reservarHorario,
   getHorarioById,
   createHorario,
   updateHorario,
   deleteHorario,
 } = require("../controllers/Citas/Horarios.controller");
 
-router.get("/", getAllHorarios);
+router.get("/", getHorariosDisponibles);
+router.get('/HrPorFecha', getHorariosPorFecha);
+router.post("/reservar", reservarHorario);
 router.get("/:id", getHorarioById);
 router.post("/", createHorario);
 router.put("/:id", updateHorario);
