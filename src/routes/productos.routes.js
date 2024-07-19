@@ -3,6 +3,19 @@ const router = express.Router();
 const authControllerProductos = require('../controllers/Productos.controller');
 /* const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); */
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + '-' + file.originalname);
+    }
+  });
+  
+  const upload = multer({ storage: storage });
 
 // Ruta para iniciar sesión
 router.get('/Productos', authControllerProductos.getProductos); // Utilizar el método login del controlador de autenticación
@@ -16,6 +29,11 @@ router.get('/filtro_producto', authControllerProductos.BuscarProductoPorCategori
 router.post('/productosId', authControllerProductos.ProductoPorId);
 router.post('/update', authControllerProductos.updateProductosExistencias);
 
+
+router.get('/Productos/:id', authControllerProductos.ProductoPorId); 
+router.put('/Productos/:id', authControllerProductos.updateProducto); 
+router.delete('/Productos/:id', authControllerProductos.deleteProducto);
+router.put('/desactivar/:id', authControllerProductos.desactivarProducto);
 /* router.get('/filtro_Marca', authControllerProductos.BuscarProductoPorMarca); */
 /* 
 BuscarProductoPorMarca */
