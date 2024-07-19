@@ -1,14 +1,65 @@
 // db/controllers/horarios.controller.js
 const Horarios = require("../../db/models/Citas/Horarios.model");
 
-// Obtener todos los Horarios
-async function getAllHorarios(req, res) {
+// Obtener todos los horarios disponibles
+async function getHorariosDisponibles(req, res) {
   try {
-    const horarios = await Horarios.findAll();
-    res.json(horarios);
+    const horarios = await Horarios.findAll({ where: { Disponible: true } });
+    res.status(200).json(horarios);
+  } catch (error) {
+    console.error("Error al obtener horarios disponibles:", error);
+    res.status(500).json({ message: "Error al obtener horarios disponibles" });
+  }
+}
+
+// Obtener horarios disponibles para una fecha específica
+const getHorariosPorFecha = async (req, res) => {
+  try {
+    const { fecha } = req.query; // Obtener la fecha de la consulta
+
+    if (!fecha) {
+      return res.status(400).json({ message: 'Fecha es requerida.' });
+    }
+
+    // Buscar horarios disponibles para la fecha especificada
+    const horarios = await Horarios.findAll({
+      where: {
+        Fecha: fecha,
+        Disponible: true
+      }
+    });
+
+    if (horarios.length === 0) {
+      return res.status(404).json({ message: 'No hay horarios disponibles para la fecha seleccionada.' });
+    }
+
+    return res.json(horarios);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al obtener los Horarios" });
+    return res.status(500).json({ message: 'Error al obtener horarios.' });
+  }
+};
+
+// Marcar un horario como no disponible (reservar).
+async function reservarHorario(req, res) {
+  try {
+    const { Fecha, Hora } = req.body;
+    const horario = await Horarios.findOne({ where: { Fecha, Hora } });
+
+    if (horario) {
+      if (horario.Disponible) {
+        horario.Disponible = false;
+        await horario.save();
+        res.status(200).json({ message: "Horario reservado exitosamente" });
+      } else {
+        res.status(409).json({ message: "El horario ya está reservado" });
+      }
+    } else {
+      res.status(404).json({ message: "El horario no existe" });
+    }
+  } catch (error) {
+    console.error("Error al reservar horario:", error);
+    res.status(500).json({ message: "Error al reservar horario" });
   }
 }
 
@@ -79,7 +130,9 @@ async function deleteHorario(req, res) {
 }
 
 module.exports = {
-  getAllHorarios,
+  getHorariosDisponibles,
+  getHorariosPorFecha,
+  reservarHorario,
   getHorarioById,
   createHorario,
   updateHorario,

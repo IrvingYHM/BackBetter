@@ -109,17 +109,27 @@ async function deleteCita(req, res) {
 async function checkAvailability(req, res) {
   try {
     const { Fecha, Hora } = req.body;
+    console.log(`Verificando disponibilidad para la fecha ${Fecha} y hora ${Hora}`);
+    
+    // Temporal: Imprimir todas las citas para depuración
+    const todasLasCitas = await Cita.findAll();
+    console.log('Todas las citas en la base de datos:', todasLasCitas);
+
+    if (!Fecha || !Hora) {
+      return res.status(400).json({ message: "Fecha y Hora son requeridos" });
+    }
+
     const citaExistente = await Cita.findOne({ where: { Fecha, Hora } });
+    console.log('Resultado de la búsqueda de cita existente:', citaExistente);
+
     if (citaExistente) {
-      res.status(409).json({ message: "El horario no está disponible" });
+      return res.status(409).json({ message: "El horario no está disponible" });
     } else {
-      res.status(200).json({ message: "El horario está disponible" });
+      return res.status(200).json({ message: "El horario está disponible" });
     }
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ message: "Error al verificar disponibilidad de horarios" });
+    console.error("Error en el servidor:", error);
+    return res.status(500).json({ message: "Error al verificar disponibilidad de horarios" });
   }
 }
 
