@@ -20,6 +20,7 @@ router.post("/verificar-respuesta", recuperarController.verificarRespuesta);
 router.post("/Enviar_codigo", recuperarController.enviarCodigo);
 router.post("/Verificacion_codigo", recuperarController.verificarCodigo);
 router.get('/find/:codigoAle', clienteController.findClienteByCodigoAle); // Nueva ruta para buscar cliente por codigoAle
-
+// Ruta para obtener la dirección de un cliente específico por IdCliente
+router.get('/clientes/:IdCliente/direccion', clienteController.getDireccionClientePorId);
 
 module.exports = router;

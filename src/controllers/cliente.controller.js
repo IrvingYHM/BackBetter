@@ -3,7 +3,7 @@ const Cliente = require("../db/models/cliente.model");
 const bcrypt = require('bcryptjs');
 const Log = require("../db/models/log/log.model")
 const requestIp = require('request-ip');
-
+const DireccionCliente = require("../db/models/Direc_Client.model");
 
 // Controlador para obtener todos los clientes o filtrar por correo electrónico
 async function getAllClientes(req, res) {
@@ -192,6 +192,24 @@ async function findClienteByCodigoAle(req, res) {
   }
 }
 
+// Controlador para obtener la dirección de un cliente por su IdCliente
+async function getDireccionClientePorId(req, res) {
+  const { IdCliente } = req.params;
+  try {
+    const direccionCliente = await DireccionCliente.findOne({
+      where: { IdCliente },
+    });
+    if (direccionCliente) {
+      res.json(direccionCliente);
+    } else {
+      res.status(404).json({ message: "Dirección no encontrada" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener la dirección del cliente" });
+  }
+}
+
 
 
 module.exports = {
@@ -199,7 +217,8 @@ module.exports = {
   createCliente,
   getClientePorId,
   updateCliente,
-  findClienteByCodigoAle
+  findClienteByCodigoAle,
+  getDireccionClientePorId
 };
 
 

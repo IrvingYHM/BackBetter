@@ -240,6 +240,39 @@ async function updateProductosExistencias(req, res) {
   }
 }
 
+
+// Buscar productos en oferta por nombre
+async function BuscarProductoEnOfertaPorNombre(req, res) {
+  const { nombre } = req.params;
+
+  try {
+    const productos = await Productos.findAll({
+      where: {
+        vchNombreProducto: {
+          [Op.like]: `%${nombre}%`
+        },
+        Existencias: {
+          [Op.gt]: 0
+        },
+        EnOferta: 1
+      },
+      include: [
+        { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
+        { model: Marca, as: "marca", attributes: ["NombreMarca"] }
+      ]
+    });
+
+    if (productos.length === 0) {
+      return res.status(404).json({ message: "No se encontraron productos en oferta con el nombre especificado" });
+    }
+
+    res.json(productos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al buscar productos en oferta por nombre" });
+  }
+}
+
 module.exports = {
   getProductos,
   getProductosOfertas,
@@ -247,6 +280,7 @@ module.exports = {
   BuscarProducto,
   BuscarProductoPorCategoria,
   ProductoPorId,
-  updateProductosExistencias
+  updateProductosExistencias,
+  BuscarProductoEnOfertaPorNombre
   /*     BuscarProductoPorMarca */
 };
