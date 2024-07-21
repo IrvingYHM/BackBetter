@@ -1,5 +1,6 @@
 // src/controllers/Citas/cita.controller.js
 const Cita = require("../../db/models/Citas/Cita.model");
+const TipoCita = require("../../db/models/Citas/TipoCita.model");
 
 // Obtener todas las citas
 async function getCitas(req, res) {
@@ -39,7 +40,15 @@ async function createCita(req, res) {
       Costo,
       IdEstadoCita,
       Observaciones,
+      DescripcionT,
     } = req.body;
+    
+    // Verifica que IdTipoCita exista en la tabla tbltipo_cita antes de crear la cita
+    const tipoCitaExiste = await TipoCita.findByPk(IdTipoCita);
+    if (!tipoCitaExiste) {
+      return res.status(400).json({ message: "El tipo de cita no existe" });
+    }
+
     const nuevaCita = await Cita.create({
       Fecha,
       Hora,
@@ -48,7 +57,9 @@ async function createCita(req, res) {
       Costo,
       IdEstadoCita,
       Observaciones,
+      DescripcionT,
     });
+
     res.status(201).json(nuevaCita);
   } catch (error) {
     console.error(error);
@@ -68,6 +79,7 @@ async function updateCita(req, res) {
       Costo,
       IdEstadoCita,
       Observaciones,
+      DescripcionT,
     } = req.body;
     const cita = await Cita.findByPk(id);
     if (cita) {
@@ -78,6 +90,7 @@ async function updateCita(req, res) {
       cita.Costo = Costo;
       cita.IdEstadoCita = IdEstadoCita;
       cita.Observaciones = Observaciones;
+      cita.DescripcionT = DescripcionT;
       await cita.save();
       res.json(cita);
     } else {
