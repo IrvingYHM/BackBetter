@@ -13,6 +13,24 @@ async function getCitas(req, res) {
   }
 }
 
+// Obtener citas por ID de usuario
+async function getCitasByUserId(req, res) {
+  try {
+    const idCliente = req.params.idCliente;
+    const citas = await Cita.findAll({
+      where: { IdCliente: idCliente }
+    });
+    if (citas.length > 0) {
+      res.json(citas);
+    } else {
+      res.status(404).json({ message: "No se encontraron citas para este usuario" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener las citas" });
+  }
+}
+
 // Obtener una cita por ID
 async function getCitaById(req, res) {
   try {
@@ -148,6 +166,7 @@ async function checkAvailability(req, res) {
 
 module.exports = {
   getCitas,
+  getCitasByUserId,
   getCitaById,
   createCita,
   updateCita,

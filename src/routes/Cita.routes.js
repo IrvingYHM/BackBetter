@@ -9,6 +9,9 @@ router.get("/", citaController.getCitas);
 // Ruta para obtener una cita por ID
 router.get("/:id", citaController.getCitaById);
 
+// Ruta para obtener citas por ID de usuario
+router.get("/usuario/:idCliente", citaController.getCitasByUserId);
+
 // Ruta para crear una nueva cita
 router.post("/", citaController.createCita);
 
