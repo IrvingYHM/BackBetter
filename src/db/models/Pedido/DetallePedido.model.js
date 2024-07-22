@@ -17,7 +17,7 @@ DetallePedido.init({
   },
   IdProducto: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: true
   },
   IdGraduacion: {
     type: DataTypes.INTEGER,

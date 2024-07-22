@@ -38,42 +38,53 @@ async function getAllPedidos(req, res) {
 
 
 async function createPedido(req, res) {
-  const { IdCliente } = req.body;
+  const { 
+    IdCliente,
+    Numero_Guia, 
+    TotalPe, 
+    IdMetodoPago, 
+    IdEstado_Pedido, 
+    IdEstado_Envio, 
+    IdDireccion, 
+    IdPaqueteria, 
+    IdEmpleado 
+  } = req.body;
+
   try {
-      let nuevoPedidoId;
+    let nuevoPedidoId;
 
-      // Verificar si el cliente ya tiene un pedido en curso
-      const existingPedido = await Pedido.findOne({ where: { IdCliente, IdEstado_Pedido: 1 } });
-      if (existingPedido) {
-          // Si el cliente ya tiene un pedido en curso, guardar el ID del pedido existente
-          nuevoPedidoId = existingPedido.id;
-      } else {
-          // Si el cliente no tiene un pedido en curso, crear un nuevo pedido
-          const nuevoPedido = await Pedido.create({
-              Fecha_Hora: new Date(), // Puedes ajustar la fecha y hora según sea necesario
-              IdCliente,
-              Numero_Guia: 12345, // Puedes generar un número de guía aleatorio
-              TotalPe: 0, // Inicialmente el total puede ser 0
-              IdMetodoPago: 1, // Aquí puedes usar el Id del método de pago correspondiente
-              IdEstado_Pedido: 1, // Aquí puedes usar el Id del estado del pedido correspondiente (por ejemplo, "En curso")
-              IdEstado_Envio: 1, // Aquí puedes usar el Id del estado de envío correspondiente
-              IdDireccion: 1, // Aquí puedes usar el Id de la dirección del cliente correspondiente
-              IdPaqueteria: 1, // Aquí puedes usar el Id de la paquetería correspondiente
-              IdEmpleado: 1, // Aquí puedes usar el Id del empleado correspondiente
-          });
+    // Verificar si el cliente ya tiene un pedido en curso
+    const existingPedido = await Pedido.findOne({ where: { IdCliente, IdEstado_Pedido: 1 } });
+    if (existingPedido) {
+      // Si el cliente ya tiene un pedido en curso, guardar el ID del pedido existente
+      nuevoPedidoId = existingPedido.id;
+    } else {
+      // Si el cliente no tiene un pedido en curso, crear un nuevo pedido
+      const nuevoPedido = await Pedido.create({
+        Fecha_Hora: new Date(), // Puedes ajustar la fecha y hora según sea necesario
+        IdCliente,
+        Numero_Guia, // Pasado desde el cuerpo de la solicitud
+        TotalPe, // Pasado desde el cuerpo de la solicitud
+        IdMetodoPago, // Pasado desde el cuerpo de la solicitud
+        IdEstado_Pedido, // Pasado desde el cuerpo de la solicitud
+        IdEstado_Envio, // Pasado desde el cuerpo de la solicitud
+        IdDireccion, // Pasado desde el cuerpo de la solicitud
+        IdPaqueteria, // Pasado desde el cuerpo de la solicitud
+        IdEmpleado // Pasado desde el cuerpo de la solicitud
+      });
 
-          // Almacena el ID del nuevo pedido en una variable
-          nuevoPedidoId = nuevoPedido.id;
-      }
+      // Almacena el ID del nuevo pedido en una variable
+      nuevoPedidoId = nuevoPedido.id;
+    }
 
-      // Obtener el pedido completo con todos sus datos
-      const pedidoCompleto = await Pedido.findOne({ where: { id: nuevoPedidoId } });
+    // Obtener el pedido completo con todos sus datos
+    const pedidoCompleto = await Pedido.findOne({ where: { id: nuevoPedidoId } });
 
-      // Enviar el pedido completo en la respuesta
-      res.status(201).json({ pedido: pedidoCompleto });
+    // Enviar el pedido completo en la respuesta
+    res.status(201).json({ pedido: pedidoCompleto });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error al crear el pedido" });
+    console.error(error);
+    res.status(500).json({ message: "Error al crear el pedido" });
   }
 }
 

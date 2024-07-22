@@ -28,6 +28,8 @@ router.get('/Buscar_productos', authControllerProductos.BuscarProducto);
 router.get('/filtro_producto', authControllerProductos.BuscarProductoPorCategoria);
 router.post('/productosId', authControllerProductos.ProductoPorId);
 router.post('/update', authControllerProductos.updateProductosExistencias);
+router.get('/find/:nombre', authControllerProductos.BuscarProductoEnOfertaPorNombre);
+
 
 
 router.get('/Productos/:id', authControllerProductos.ProductoPorId); 
