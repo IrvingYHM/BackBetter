@@ -344,5 +344,6 @@ module.exports = {
   updateProducto,
   deleteProducto,
   updateProductosExistencias,
+  BuscarProductoEnOfertaPorNombre,
   /*     BuscarProductoPorMarca */
 };
