@@ -3,7 +3,7 @@ const Cliente = require("../db/models/cliente.model");
 const bcrypt = require('bcryptjs');
 const Log = require("../db/models/log/log.model")
 const requestIp = require('request-ip');
-
+const DireccionCliente = require("../db/models/Direc_Client.model");
 
 // Controlador para obtener todos los clientes o filtrar por correo electrónico
 async function getAllClientes(req, res) {
@@ -192,6 +192,104 @@ async function findClienteByCodigoAle(req, res) {
   }
 }
 
+// Controlador para obtener la dirección de un cliente por su IdCliente
+async function getDireccionClientePorId(req, res) {
+  const { IdCliente } = req.params;
+  try {
+    const direccionCliente = await DireccionCliente.findOne({
+      where: { IdCliente },
+    });
+    if (direccionCliente) {
+      res.json(direccionCliente);
+    } else {
+      res.status(404).json({ message: "Dirección no encontrada" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener la dirección del cliente" });
+  }
+}
+
+// Controlador para actualizar la dirección de un cliente por su IdCliente
+async function updateDireccionCliente(req, res) {
+  const { IdCliente } = req.params;
+  const { calle, numero, ciudad, estado, codigoPostal } = req.body; // Asegúrate de ajustar estos campos a tu modelo
+
+  try {
+    const direccionCliente = await DireccionCliente.findOne({
+      where: { IdCliente },
+    });
+
+    if (direccionCliente) {
+      direccionCliente.calle = calle;
+      direccionCliente.numero = numero;
+      direccionCliente.ciudad = ciudad;
+      direccionCliente.estado = estado;
+      direccionCliente.codigoPostal = codigoPostal;
+
+      await direccionCliente.save();
+
+      res.json(direccionCliente);
+    } else {
+      res.status(404).json({ message: "Dirección no encontrada" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar la dirección del cliente" });
+  }
+}
+
+
+// Controlador para verificar la contraseña actual del cliente
+async function verifyPassword(req, res) {
+  const { id } = req.params;
+  const { password } = req.body;
+
+  try {
+    const cliente = await Cliente.findByPk(id);
+    if (!cliente) {
+      return res.status(404).json({ message: "Cliente no encontrado" });
+    }
+
+    // Comparar la contraseña proporcionada con el hash almacenado
+    const isMatch = await bcrypt.compare(password, cliente.vchPassword);
+    if (isMatch) {
+      res.status(200).json({ message: "Contraseña correcta" });
+    } else {
+      res.status(400).json({ message: "Contraseña incorrecta" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al verificar la contraseña" });
+  }
+}
+
+// Controlador para cambiar la contraseña del cliente
+async function changePassword(req, res) {
+  const { id } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    // Buscar el cliente en la base de datos
+    const cliente = await Cliente.findByPk(id);
+    if (!cliente) {
+      return res.status(404).json({ message: "Cliente no encontrado" });
+    }
+
+    // Actualizar la contraseña con el nuevo valor
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    cliente.vchPassword = hashedNewPassword;
+    await cliente.save();
+
+    res.status(200).json({ message: "Contraseña cambiada correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al cambiar la contraseña" });
+  }
+}
+
+
+
 
 
 module.exports = {
@@ -199,7 +297,11 @@ module.exports = {
   createCliente,
   getClientePorId,
   updateCliente,
-  findClienteByCodigoAle
+  findClienteByCodigoAle,
+  getDireccionClientePorId,
+  updateDireccionCliente,
+  verifyPassword,
+  changePassword
 };
 
 
