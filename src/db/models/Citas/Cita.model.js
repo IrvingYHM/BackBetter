@@ -55,6 +55,10 @@ Cita.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    DescripcionT: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     sequelize,

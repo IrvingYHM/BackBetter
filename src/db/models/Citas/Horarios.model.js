@@ -12,13 +12,17 @@ Horario.init(
       primaryKey: true,
       autoIncrement: true,
     },
+    Fecha: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+    },
     Hora: {
       type: DataTypes.TIME,
       allowNull: false,
     },
-    Dia: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
+    Disponible: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
   },
   {

@@ -2,6 +2,7 @@ const Productos = require("../db/models/producto.model");
 const { Op } = require("sequelize");
 const Categoria = require("../db/models/Categoria.model");
 const Marca = require("../db/models/Marca.model");
+
 /* const Graduacion = require("../db/models/Graduacion.model"); */
 
 const cloudinary = require('../services/cloudinari')
@@ -52,8 +53,26 @@ async function getProductosOfertas(req, res) {
     res.status(500).json({ message: "Error al obtener los productos" });
   }
 }
+// Desactivar producto
+async function desactivarProducto(req, res) {
+  try {
+    const { id } = req.params;
+    const producto = await Productos.findByPk(id);
+    if (producto) {
+      producto.activo = false;
+      producto.Existencias = 0;
+      await producto.save();
+      res.json({ message: "Producto desactivado correctamente" });
+    } else {
+      res.status(404).json({ message: "Producto no encontrado" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al desactivar el producto" });
+  }
+}
 
-// Controlador para crear un nuevo producto con imagen en Cloudinary
+//crear producto
 async function createProductos(req, res) {
   const { 
     vchNombreProducto,
@@ -65,23 +84,16 @@ async function createProductos(req, res) {
   } = req.body;
 
   try {
-    if (!req.files || Object.keys(req.files).length === 0) {
+    if (!req.file) {
       return res.status(400).json({ message: 'No se ha seleccionado ningún archivo.' });
     }
 
-    const file = req.files.image; // 'image' es el nombre del campo en el formulario
-
-    // Subir la imagen a Cloudinary
-    const result = await cloudinary.uploader.upload(file.tempFilePath, {
-      folder: 'Productos'
-    });
-
-    console.log(result)
+    const filePath = path.join('uploads', req.file.filename);
 
     // Guardar la URL de la imagen en la base de datos
     const nuevoProducto = await Productos.create({
       vchNombreProducto,
-      vchNomImagen: result.url,
+      vchNomImagen: filePath,
       vchDescripcion,
       Existencias, 
       IdCategoria, 
@@ -95,6 +107,7 @@ async function createProductos(req, res) {
     res.status(500).json({ message: 'Error al crear el producto.' });
   }
 }
+
 
 //Busqueda de productos por letra o nombre xd
 async function BuscarProducto(req, res) {
@@ -202,23 +215,68 @@ async function BuscarProductoPorCategoria(req, res) {
   }
 }
 
-const ProductoPorId = async ( req, res ) => {
+const ProductoPorId = async (req, res) => {
   try {
-      const { IdProducto } = req.body;
-      const producto = await Productos.findByPk(IdProducto, {
-        include: [
-          { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
-          { model: Marca, as: "marca", attributes: ["NombreMarca"] },
-        ],
-      });
+    const { id } = req.params;
+    const producto = await Productos.findByPk(id, {
+      include: [
+        { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
+        { model: Marca, as: "marca", attributes: ["NombreMarca"] },
+      ],
+    });
 
-      if(!producto){
-        return res.status(404).json({ success: false, message: "Producto no encontrado" });
-
-      }
-      res.json(producto);
+    if (!producto) {
+      return res.status(404).json({ success: false, message: "Producto no encontrado" });
+    }
+    res.json(producto);
   } catch (error) {
-      res.status(500).send({ success: false, message: error.message });
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+const updateProducto = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { vchNombreProducto, vchDescripcion, Precio, Existencias, IdCategoria, IdMarca, vchNomImagen } = req.body;
+
+    const producto = await Productos.findByPk(id);
+
+    if (!producto) {
+      return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    producto.vchNombreProducto = vchNombreProducto || producto.vchNombreProducto;
+    producto.vchDescripcion = vchDescripcion || producto.vchDescripcion;
+    producto.Precio = Precio || producto.Precio;
+    producto.Existencias = Existencias || producto.Existencias;
+    producto.IdCategoria = IdCategoria || producto.IdCategoria;
+    producto.IdMarca = IdMarca || producto.IdMarca;
+    producto.vchNomImagen = vchNomImagen || producto.vchNomImagen;
+
+    await producto.save();
+
+    res.json({ message: "Producto actualizado con éxito", producto });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al actualizar el producto" });
+  }
+};
+
+async function deleteProducto(req, res) {
+  try {
+    const { id } = req.params;
+    const producto = await Productos.findByPk(id);
+
+    if (!producto) {
+      return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    await producto.destroy();
+
+    res.json({ message: "Producto eliminado con éxito" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al eliminar el producto" });
   }
 }
 
@@ -239,6 +297,8 @@ async function updateProductosExistencias(req, res) {
       res.status(500).json({ message: "Error al actualizar las existencias" });
   }
 }
+
+
 
 
 // Buscar productos en oferta por nombre
@@ -276,11 +336,14 @@ async function BuscarProductoEnOfertaPorNombre(req, res) {
 module.exports = {
   getProductos,
   getProductosOfertas,
+  desactivarProducto,
   createProductos,
   BuscarProducto,
   BuscarProductoPorCategoria,
   ProductoPorId,
+  updateProducto,
+  deleteProducto,
   updateProductosExistencias,
-  BuscarProductoEnOfertaPorNombre
+  BuscarProductoEnOfertaPorNombre,
   /*     BuscarProductoPorMarca */
 };
