@@ -55,30 +55,35 @@ async function createPedido(req, res) {
 
     // Verificar si el cliente ya tiene un pedido en curso
     const existingPedido = await Pedido.findOne({ where: { IdCliente, IdEstado_Pedido: 1 } });
+
+    // Asegúrate de que el valor de IdCliente y IdEstado_Pedido esté definido
+    console.log('IdCliente:', IdCliente);
+    console.log('IdEstado_Pedido:', IdEstado_Pedido);
+
     if (existingPedido) {
       // Si el cliente ya tiene un pedido en curso, guardar el ID del pedido existente
-      nuevoPedidoId = existingPedido.id;
+      nuevoPedidoId = existingPedido.IdPedido;
     } else {
       // Si el cliente no tiene un pedido en curso, crear un nuevo pedido
       const nuevoPedido = await Pedido.create({
         Fecha_Hora: new Date(), // Puedes ajustar la fecha y hora según sea necesario
         IdCliente,
-        Numero_Guia, // Pasado desde el cuerpo de la solicitud
-        TotalPe, // Pasado desde el cuerpo de la solicitud
-        IdMetodoPago, // Pasado desde el cuerpo de la solicitud
-        IdEstado_Pedido, // Pasado desde el cuerpo de la solicitud
-        IdEstado_Envio, // Pasado desde el cuerpo de la solicitud
-        IdDireccion, // Pasado desde el cuerpo de la solicitud
-        IdPaqueteria, // Pasado desde el cuerpo de la solicitud
-        IdEmpleado // Pasado desde el cuerpo de la solicitud
+        Numero_Guia,
+        TotalPe,
+        IdMetodoPago,
+        IdEstado_Pedido,
+        IdEstado_Envio,
+        IdDireccion,
+        IdPaqueteria,
+        IdEmpleado
       });
 
       // Almacena el ID del nuevo pedido en una variable
-      nuevoPedidoId = nuevoPedido.id;
+      nuevoPedidoId = nuevoPedido.IdPedido;
     }
 
     // Obtener el pedido completo con todos sus datos
-    const pedidoCompleto = await Pedido.findOne({ where: { id: nuevoPedidoId } });
+    const pedidoCompleto = await Pedido.findOne({ where: { IdPedido: nuevoPedidoId } });
 
     // Enviar el pedido completo en la respuesta
     res.status(201).json({ pedido: pedidoCompleto });
