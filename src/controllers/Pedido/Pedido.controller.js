@@ -37,7 +37,7 @@ async function getAllPedidos(req, res) {
 }
 
 
-async function createPedido(req, res) {
+/* async function createPedido(req, res) {
   const { 
     IdCliente,
     Numero_Guia, 
@@ -91,7 +91,66 @@ async function createPedido(req, res) {
     console.error(error);
     res.status(500).json({ message: "Error al crear el pedido" });
   }
-}
+} */
+
+
+  async function createPedido(req, res) {
+    const { 
+      IdCliente,
+      Numero_Guia, 
+      TotalPe, 
+      IdMetodoPago, 
+      IdEstado_Pedido, 
+      IdEstado_Envio, 
+      IdDireccion, 
+      IdPaqueteria, 
+      IdEmpleado,
+      Fecha_Hora // Asegúrate de que se envíe desde la solicitud
+    } = req.body;
+  
+    try {
+      let nuevoPedidoId;
+  
+      // Validaciones básicas
+      if (!IdCliente || !Numero_Guia || !TotalPe || !IdMetodoPago || !IdEstado_Pedido || !IdEstado_Envio || !IdDireccion || !IdPaqueteria || !IdEmpleado || !Fecha_Hora) {
+        return res.status(400).json({ message: "Faltan datos necesarios para crear el pedido" });
+      }
+  
+      // Verificar si el cliente ya tiene un pedido en curso
+      const existingPedido = await Pedido.findOne({ where: { IdCliente, IdEstado_Pedido: 1 } });
+  
+      if (existingPedido) {
+        // Si el cliente ya tiene un pedido en curso, guardar el ID del pedido existente
+        nuevoPedidoId = existingPedido.IdPedido;
+      } else {
+        // Si el cliente no tiene un pedido en curso, crear un nuevo pedido
+        const nuevoPedido = await Pedido.create({
+          Fecha_Hora, // Tomar la fecha y hora del cuerpo de la solicitud
+          IdCliente,
+          Numero_Guia,
+          TotalPe,
+          IdMetodoPago,
+          IdEstado_Pedido,
+          IdEstado_Envio,
+          IdDireccion,
+          IdPaqueteria,
+          IdEmpleado
+        });
+  
+        // Almacena el ID del nuevo pedido en una variable
+        nuevoPedidoId = nuevoPedido.IdPedido;
+      }
+  
+      // Obtener el pedido completo con todos sus datos
+      const pedidoCompleto = await Pedido.findOne({ where: { IdPedido: nuevoPedidoId } });
+  
+      // Enviar el pedido completo en la respuesta
+      res.status(201).json({ pedido: pedidoCompleto });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error al crear el pedido" });
+    }
+  }
 
 async function getPedidoId(req, res) {
   try {
