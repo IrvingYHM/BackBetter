@@ -1,6 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const { payment } = require('mercadopago')
+
 const clienteRouter = require('./routes/cliente.routes');
 const authRouter = require('./routes/login.routes'); // 
 const morgan = require('morgan');
@@ -25,6 +27,7 @@ const Cita = require('./routes/Cita.routes');
 const TipoCita = require('./routes/TipoCita.routes');
 const EstadoCita = require('./routes/EstadoCita.routes');
 const Horarios = require("./routes/Horarios.routes");
+const Stripe = require("./routes/Metodostripe.routes")
 
 
 const direc_ClientRouter = require("./routes/Direc_Client.routes");
@@ -86,9 +89,10 @@ app.use('/clientes', clienteRouter);
 app.use("/direcciones-clientes", direc_ClientRouter);
 app.use('/auth', authRouter); // Usa el enrutador de autenticación en la ruta /auth
 app.use('/empleados', Empleado);
-app.use('/productos', Producto)
-app.use('/DetalleCarrito', DetalleCarrito)
-app.use('/Carrito', Carrito)
+app.use('/productos', Producto);
+app.use('/DetalleCarrito', DetalleCarrito);
+app.use('/Carrito', Carrito);
+app.use('/stripe', Stripe);
 app.use('/',paymenRoute);
 app.use('/',Graduaciones);
 app.use('/',Tratamientos);

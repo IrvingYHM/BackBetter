@@ -6,4 +6,6 @@ const DetallePedido = require("../controllers/Pedido/DetallePedido.controller");
 router.get("/TodosDetalles", DetallePedido.getAllDetallePedidos);
 router.post("/crearDetalle", DetallePedido.CrearDetallePedido);
 
+
+
 module.exports = router;
