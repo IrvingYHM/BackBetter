@@ -63,6 +63,10 @@ Cliente.init({
   codigoAle: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  foto: {
+    type: DataTypes.STRING(250),
+    allowNull: false
   }
 }, {
   sequelize,

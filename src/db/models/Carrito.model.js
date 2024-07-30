@@ -16,6 +16,11 @@ Carrito.init({
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  estado_pago: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'pendiente', // Valores posibles: 'pendiente', 'aprobado', 'denegado', 'cancelado'
+  },
 }, {
   sequelize,
   modelName: 'Carrito',

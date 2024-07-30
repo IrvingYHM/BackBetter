@@ -52,6 +52,7 @@ async function login(req, res) {
             nombre: cliente.vchNomCliente,
             apellidoPaterno: cliente.vchAPaterno,
             apellidoMaterno: cliente.vchAMaterno,
+            foto: cliente.foto,
             userType: 'cliente' // Agregar el userType aquí
         }, 'secreto', { expiresIn: '1h' });
 
