@@ -26,7 +26,7 @@ router.post('/Crear_productos',authControllerProductos.createProductos)
 
 router.get('/Buscar_productos', authControllerProductos.BuscarProducto);
 router.get('/filtro_producto', authControllerProductos.BuscarProductoPorCategoria);
-router.post('/productosId', authControllerProductos.ProductoPorId);
+router.post('/productosId', authControllerProductos.ProductoPorIdParadetalle);
 router.post('/update', authControllerProductos.updateProductosExistencias);
 router.get('/find/:nombre', authControllerProductos.BuscarProductoEnOfertaPorNombre);
 

@@ -1,5 +1,8 @@
-const mercadopago = require('mercadopago');
+const mercadopago = require("mercadopago");
+const Carrito = require("../db/models/Carrito.model");
 
+// Variable global para almacenar el ID de la orden
+let lastOrderId = null;
 /* module.exports.createOrder = async (req, res) => {
     mercadopago.configure({
         access_token: "TEST-708692578909054-040704-5d4e1bcb97c7139691b01accd7132957-1758609539",
@@ -32,51 +35,73 @@ const mercadopago = require('mercadopago');
 };
  */
 
-
 module.exports.createOrder = async (req, res) => {
-    const { items } = req.body;
-    
-    // Configura MercadoPago
-    mercadopago.configure({
-      access_token: "TEST-708692578909054-040704-5d4e1bcb97c7139691b01accd7132957-1758609539",
+  const { items, clienteId } = req.body;
+
+  // Asigna el clienteId a la variable global
+  lastOrderId = clienteId;
+  console.log("Received Cliente ID:", lastOrderId); // Verifica que clienteId no sea undefined
+
+  // Configura MercadoPago
+  mercadopago.configure({
+    access_token:
+      "TEST-708692578909054-040704-5d4e1bcb97c7139691b01accd7132957-1758609539",
+  });
+
+  try {
+    const result = await mercadopago.preferences.create({
+      items: items,
+      back_urls: {
+        success: `http://localhost:5173/PaginaSuccess`,
+        failure: "http://localhost:3000/failure",
+        pending: "http://localhost:3000/pending",
+      },
+      notification_url: "https://b2c9-201-97-134-185.ngrok-free.app/webhook",
     });
-    
-    try {
-      const result = await mercadopago.preferences.create({
-        items: items,
-        back_urls: {
-          success: "http://localhost:5173/",
-          failure: "http://localhost:3000/failure",
-          pending: "http://localhost:3000/pending",
-        }, 
-        notification_url: "https://9949-200-68-183-23.ngrok-free.app/webhook",
+
+    // Devuelve la URL de inicio de pago en la respuesta
+    res.json({ init_point: result.body.init_point });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al crear la orden");
+  }
+};
+
+module.exports.receiveWebhook = async (req, res) => {
+  console.log(req.query);
+  const payment = req.query;
+
+  try {
+    if (payment.type === "payment") {
+      const data = await mercadopago.payment.findById(payment["data.id"]);
+      console.log(data);
+
+      // Obtener el estado del pago desde la respuesta de Mercado Pago
+      const estadoPago = data.body.status === 'approved' ? 'aprobado' : 'pendiente';
+
+      // Busca el cliente en la base de datos usando el lastOrderId
+      const carrito = await Carrito.findOne({
+        where: { IdCliente: lastOrderId },
       });
-  
-      // Devuelve la URL de inicio de pago en la respuesta
-      res.json({ init_point: result.body.init_point });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Error al crear la orden');
+
+      if (carrito) {
+        // Actualiza el estado_pago del carrito
+        carrito.estado_pago = estadoPago;
+        await carrito.save();
+
+        console.log("Cliente encontrado en el carrito.");
+        res.json({ message: "Cliente encontrado en el carrito." });
+      } else {
+        console.log("Cliente no encontrado en el carrito.");
+        res
+          .status(404)
+          .json({ message: "Cliente no encontrado en el carrito." });
+      }
+    } else {
+      res.status(400).json({ message: "Tipo de pago no soportado." });
     }
-  };
-  
-
-module.exports.receiveWebhook = async(req,res) =>{
-    console.log(req.query);
-    const payment = req.query
-
-    try {
-        if(payment.type === "payment"){
-            const data =  await mercadopago.payment.findById(payment['data.id'])
-            console.log(data)
-          }
-          
-          res.sendStatus(204)
-        
-    } catch (error) {
-        console.log(error);
-        return res.senStatus(500).json({ error: error.message});
-    }
-
-
-}
+  } catch (error) {
+    console.log(error);
+    return res.senStatus(500).json({ error: error.message });
+  }
+};

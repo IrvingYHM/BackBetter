@@ -80,25 +80,37 @@ async function createProductos(req, res) {
     Existencias, 
     IdCategoria, 
     IdMarca,
-    Precio
+    Precio,
+    EnOferta,
+    PrecioOferta
   } = req.body;
 
   try {
-    if (!req.file) {
+    if (!req.files || Object.keys(req.files).length === 0) {
       return res.status(400).json({ message: 'No se ha seleccionado ningún archivo.' });
     }
 
-    const filePath = path.join('uploads', req.file.filename);
+    const file = req.files.image; // 'image' es el nombre del campo en el formulario
+
+    // Subir la imagen a Cloudinary
+    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+      folder: 'Productos'
+    });
+    
+    console.log(result)
+
 
     // Guardar la URL de la imagen en la base de datos
     const nuevoProducto = await Productos.create({
       vchNombreProducto,
-      vchNomImagen: filePath,
+      vchNomImagen: result.url,
       vchDescripcion,
       Existencias, 
       IdCategoria, 
       IdMarca,
-      Precio
+      Precio,
+      EnOferta,
+      PrecioOferta
     });
 
     res.status(201).json(nuevoProducto);
@@ -215,6 +227,26 @@ async function BuscarProductoPorCategoria(req, res) {
   }
 }
 
+const ProductoPorIdParadetalle = async ( req, res ) => {
+  try {
+      const { IdProducto } = req.body;
+      const producto = await Productos.findByPk(IdProducto, {
+        include: [
+          { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
+          { model: Marca, as: "marca", attributes: ["NombreMarca"] },
+        ],
+      });
+
+      if(!producto){
+        return res.status(404).json({ success: false, message: "Producto no encontrado" });
+
+      }
+      res.json(producto);
+  } catch (error) {
+      res.status(500).send({ success: false, message: error.message });
+  }
+}
+
 const ProductoPorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -233,6 +265,8 @@ const ProductoPorId = async (req, res) => {
     res.status(500).send({ success: false, message: error.message });
   }
 };
+
+
 
 const updateProducto = async (req, res) => {
   try {
@@ -340,6 +374,7 @@ module.exports = {
   createProductos,
   BuscarProducto,
   BuscarProductoPorCategoria,
+  ProductoPorIdParadetalle,
   ProductoPorId,
   updateProducto,
   deleteProducto,

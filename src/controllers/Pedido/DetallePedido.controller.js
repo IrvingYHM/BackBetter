@@ -8,8 +8,6 @@ const Cliente = require("../../db/models/cliente.model")
 
 const Categoria = require('../../db/models/Categoria.model');
 const Marca = require('../../db/models/Marca.model');
-
-
 // Controlador para obtener todos los detalles de pedidos
 async function getAllDetallePedidos(req, res) {
   try {

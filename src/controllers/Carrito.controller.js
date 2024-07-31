@@ -26,6 +26,8 @@ async function createCarrito(req, res) {
   try {
     let carritoExistente = await Carrito.findOne({ where: { IdCliente } });
     if (carritoExistente) {
+
+      await carritoExistente.update({estado_pago: 'pendiente'});
       res.status(200).json(carritoExistente);
     } else {
       // Crear un nuevo carrito si el cliente no tiene uno
@@ -75,6 +77,23 @@ async function VerDetalleCarrito(req, res) {
   }
 }
 
+/* async function eliminarDetalleCarrito(req, res) {
+  try {
+    const idCarrito = req.app.locals.clienteIdCarrito;
+
+    if (!idCarrito) {
+      return res.status(404).json({ message: "El cliente no tiene un carrito." });
+    }
+
+    await tbldetallecarrito.destroy({ where: { IdCarrito: idCarrito } });
+    res.status(200).json({ message: "Detalle del carrito eliminado exitosamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al eliminar el detalle del carrito" });
+  }
+} */
+
+
 async function eliminarDetalleCarrito(req, res) {
   try {
     const idCarrito = req.app.locals.clienteIdCarrito;
@@ -83,6 +102,19 @@ async function eliminarDetalleCarrito(req, res) {
       return res.status(404).json({ message: "El cliente no tiene un carrito." });
     }
 
+    // Buscar el carrito usando el idCarrito
+    const carrito = await Carrito.findOne({ where: { IdCarrito: idCarrito } });
+
+    if (!carrito) {
+      return res.status(404).json({ message: "Carrito no encontrado." });
+    }
+
+    // Verificar el estado_pago del carrito
+    if (carrito.estado_pago !== 'aprobado') {
+      return res.status(400).json({ message: "El estado de pago no está aprobado." });
+    }
+
+    // Eliminar el detalle del carrito
     await tbldetallecarrito.destroy({ where: { IdCarrito: idCarrito } });
     res.status(200).json({ message: "Detalle del carrito eliminado exitosamente" });
   } catch (error) {
