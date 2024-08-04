@@ -120,21 +120,38 @@ async function updateCita(req, res) {
   }
 }
 
-// Eliminar una cita
-async function deleteCita(req, res) {
+// Cancela una cita
+const cancelarCita = async (req, res) => {
+  const { id } = req.params; // Obtenemos el ID de la cita desde los parámetros de la solicitud
+
   try {
-    const { id } = req.params;
-    const deleted = await Cita.destroy({ where: { IdCita: id } });
-    if (deleted) {
-      res.json({ message: "Cita eliminada correctamente" });
-    } else {
-      res.status(404).json({ message: "Cita no encontrada" });
+    // Busca la cita por ID
+    const cita = await Cita.findByPk(id);
+
+    // Verifica si la cita existe
+    if (!cita) {
+      return res.status(404).json({ message: "Cita no encontrada" });
     }
+
+    // Verifica si la cita ya está cancelada
+    if (cita.IdEstadoCita === 4) {
+      return res
+        .status(400)
+        .json({ message: "La cita ya está cancelada" });
+    }
+
+    // Cambia el estado de la cita a "Cancelada" (ID 4)
+    cita.IdEstadoCita = 4;
+    await cita.save();
+
+    return res.status(200).json({ message: "Cita cancelada exitosamente" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error al eliminar la cita" });
+    console.error("Error al cancelar la cita:", error);
+    return res
+      .status(500)
+      .json({ message: "Error al cancelar la cita", error });
   }
-}
+};
 
 // Verificar disponibilidad de horarios
 async function checkAvailability(req, res) {
@@ -170,6 +187,6 @@ module.exports = {
   getCitaById,
   createCita,
   updateCita,
-  deleteCita,
+  cancelarCita,
   checkAvailability,
 };
