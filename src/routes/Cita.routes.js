@@ -18,8 +18,8 @@ router.post("/", citaController.createCita);
 // Ruta para actualizar una cita por ID
 router.put("/:id", citaController.updateCita);
 
-// Ruta para eliminar una cita por ID
-router.delete("/:id", citaController.deleteCita);
+// Ruta para cancelar una cita por ID
+router.put("/cancelar/:id", cancelarCita);
 
 // Ruta para verificar disponibilidad de horarios
 router.post("/check-availability", citaController.checkAvailability);
