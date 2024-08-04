@@ -38,6 +38,7 @@ async function getAllDetallePedidos(req, res) {
           model: Pedido, 
           as: "Pedido",
           attributes: [
+            'IdCliente',
             'Fecha_Hora',
             'TotalPe'
           ]
@@ -57,6 +58,7 @@ async function getAllDetallePedidos(req, res) {
 
       return {
         IdProducto: producto.IdProducto,
+        IdCliente: pedido.IdCliente,
         NombreProducto: producto.vchNombreProducto,
         Existencias: producto.Existencias,
         Categoria: categoria.NombreCategoria || 'No disponible',
