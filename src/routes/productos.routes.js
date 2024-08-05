@@ -32,6 +32,7 @@ router.get('/find/:nombre', authControllerProductos.BuscarProductoEnOfertaPorNom
 
 
 
+
 router.get('/Productos/:id', authControllerProductos.ProductoPorId); 
 router.put('/Productos/:id', authControllerProductos.updateProducto); 
 router.delete('/Productos/:id', authControllerProductos.deleteProducto);
@@ -39,6 +40,8 @@ router.put('/desactivar/:id', authControllerProductos.desactivarProducto);
 /* router.get('/filtro_Marca', authControllerProductos.BuscarProductoPorMarca); */
 /* 
 BuscarProductoPorMarca */
+
+router.get('/Buscar_productosNombres/:nombre', authControllerProductos.BuscarProductoPorNombres);
 
 /* 
 /filtro_producto?Categoria=valor&graduacion=valor&marca=valor */

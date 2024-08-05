@@ -367,6 +367,46 @@ async function BuscarProductoEnOfertaPorNombre(req, res) {
   }
 }
 
+async function BuscarProductoPorNombres  (req, res) {
+  try {
+    const nombre = req.params.nombre;
+    if (!nombre) {
+      return res.status(400).json({ message: "Nombre del producto es requerido" });
+    }
+
+    const productos = await Productos.findAll({
+      where: {
+        vchNombreProducto: {
+          [Op.like]: `%${nombre.replace(/[^a-zA-Z0-9\s]/g, '')}%` // Eliminar caracteres especiales que puedan causar problemas
+        },
+        Existencias: {
+          [Op.gt]: 0
+        }
+      },
+      include: [
+        {
+          model: Categoria,
+          attributes: ['IdCategoria', 'NombreCategoria']
+        },
+        {
+          model: Marca,
+          attributes: ['IdMarca', 'NombreMarca']
+        }
+      ]
+    });
+
+    if (productos.length === 0) {
+      return res.status(404).json({ message: "No se encontraron productos" });
+    }
+
+    res.json(productos);
+  } catch (error) {
+    console.error('Error en la búsqueda de productos:', error);
+    res.status(500).send('Error en el servidor');
+  }
+};
+
+
 module.exports = {
   getProductos,
   getProductosOfertas,
@@ -380,5 +420,6 @@ module.exports = {
   deleteProducto,
   updateProductosExistencias,
   BuscarProductoEnOfertaPorNombre,
+  BuscarProductoPorNombres
   /*     BuscarProductoPorMarca */
 };
