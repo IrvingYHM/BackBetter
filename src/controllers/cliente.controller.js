@@ -103,7 +103,6 @@ async function createCliente(req, res) {
 
 async function getClientePorId(req,res){
   const { id } = req.params;
-
   try {
     const cliente = await Cliente.findByPk(id);
     if(!cliente){
@@ -127,6 +126,7 @@ async function updateCliente(req, res) {
     vchAMaterno,
     vchCorreo,
     vchTelefono,
+    foto,
     // Nueva contraseña
 /*     vchPassword, */
     // Pregunta y respuesta secretas
@@ -146,6 +146,7 @@ async function updateCliente(req, res) {
     cliente.vchAMaterno = vchAMaterno;
     cliente.vchCorreo = vchCorreo;
     cliente.vchTelefono = vchTelefono;
+    cliente.foto = foto;
 
     // Registro en el log
     const ip = requestIp.getClientIp(req);

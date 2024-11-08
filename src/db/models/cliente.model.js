@@ -64,11 +64,12 @@ Cliente.init({
     type: DataTypes.INTEGER,
     allowNull: false
   },
-/*   foto: {
+   foto: {
     type: DataTypes.STRING(250),
     allowNull: false
-  } */
-}, {
+  } 
+}, 
+{
   sequelize,
   modelName: 'Cliente',
   tableName: 'tblclientes',

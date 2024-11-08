@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const { payment } = require('mercadopago')
+const bodyParser = require('body-parser');
 
 const clienteRouter = require('./routes/cliente.routes');
 const authRouter = require('./routes/login.routes'); // 
@@ -44,15 +45,21 @@ app.use((req, res, next) => {
 });
 
 // Configurar opciones de CORS
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
 const corsOptions = {
     origin: '*', // Permitir solicitudes desde cualquier origen
-    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATH'], // Permitir solo los métodos GET y POST
-    allowedHeaders: ['Content-Type', 'Authorization'], // Permitir solo ciertos encabezados
+    methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATH'],// Permitir solo ciertos encabezados
   };
 
 //Primero los middlewares.
 app.use(morgan('dev'));
 app.use(cors(corsOptions));
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.json());
 app.use(fileupload({
   useTempFiles: true,
