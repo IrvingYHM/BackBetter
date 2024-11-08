@@ -4,6 +4,8 @@ const authControllerProductos = require('../controllers/Productos.controller');
 /* const multer = require('multer');
 const upload = multer({ dest: 'uploads/' }); */
 const multer = require('multer');
+const { guardarSuscripcionEnBD } = require('../controllers/suscripcion.controller'); // Importamos la función
+
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -21,6 +23,29 @@ const storage = multer.diskStorage({
 router.get('/Productos', authControllerProductos.getProductos); // Utilizar el método login del controlador de autenticación
 router.get('/ProductosOfertas', authControllerProductos.getProductosOfertas); // Utilizar el método login del controlador de autenticación
 
+
+
+router.post('/suscribirse', async (req, res) => {
+  const { endpoint, keys } = req.body;
+
+  // Verificamos que se haya enviado la información necesaria
+  if (!endpoint || !keys || !keys.p256dh || !keys.auth) {
+    return res.status(400).json({ error: 'Faltan datos requeridos' });
+  }
+
+  try {
+    // Guardamos la suscripción en la base de datos
+    await guardarSuscripcionEnBD({ endpoint, keys });
+
+    // Enviamos una respuesta de éxito
+    res.status(201).json({ message: 'Suscripción guardada correctamente' });
+  } catch (error) {
+    // En caso de error, respondemos con un mensaje de error
+    console.error('Error al guardar la suscripción:', error);
+    res.status(500).json({ error: 'Error al guardar la suscripción' });
+  }
+});
+
 router.post('/Crear_productos',authControllerProductos.createProductos)
 /* router.post('/Crear_productos', upload.single('imagen'), authControllerProductos.createProductos) */
 
@@ -29,6 +54,8 @@ router.get('/filtro_producto', authControllerProductos.BuscarProductoPorCategori
 router.post('/productosId', authControllerProductos.ProductoPorIdParadetalle);
 router.post('/update', authControllerProductos.updateProductosExistencias);
 router.get('/find/:nombre', authControllerProductos.BuscarProductoEnOfertaPorNombre);
+
+
 
 
 

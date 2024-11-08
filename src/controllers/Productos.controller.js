@@ -2,8 +2,12 @@ const Productos = require("../db/models/producto.model");
 const { Op } = require("sequelize");
 const Categoria = require("../db/models/Categoria.model");
 const Marca = require("../db/models/Marca.model");
+// Importa webpush si aún no está importado
+const webpush = require('../services/webPush'); // Ajusta la ruta si es necesario
 
 /* const Graduacion = require("../db/models/Graduacion.model"); */
+const Suscripcion = require('../db/models/suscripciones.model'); // Ajusta la ruta según la ubicación de tu modelo
+
 
 const cloudinary = require('../services/cloudinari')
 
@@ -72,7 +76,14 @@ async function desactivarProducto(req, res) {
   }
 }
 
-//crear producto
+// Almacén temporal de suscripciones (puedes moverlo a un archivo global o usar base de datos si prefieres)
+let suscripciones = []; 
+
+// Función para manejar suscripciones (puedes mover esto a otro archivo si lo necesitas)
+function agregarSuscripcion(subscription) {
+  suscripciones.push(subscription);
+}
+
 async function createProductos(req, res) {
   const { 
     vchNombreProducto,
@@ -96,9 +107,6 @@ async function createProductos(req, res) {
     const result = await cloudinary.uploader.upload(file.tempFilePath, {
       folder: 'Productos'
     });
-    
-    console.log(result)
-
 
     // Guardar la URL de la imagen en la base de datos
     const nuevoProducto = await Productos.create({
@@ -113,12 +121,43 @@ async function createProductos(req, res) {
       PrecioOferta
     });
 
+    // Recuperamos todas las suscripciones desde la base de datos
+    const suscripciones = await Suscripcion.findAll();
+
+    // Enviar notificaciones a cada suscripción
+    const payload = JSON.stringify({
+      title: 'Nuevo producto agregado',
+      body: `Se ha agregado ${vchNombreProducto} al catálogo.`,
+      icon: '../img/notificacion.jpg'  // Asegúrate de tener un icono accesible en esta ruta
+    });
+
+    suscripciones.forEach(subscription => {
+      try {
+        // Verificar si las claves están correctamente formateadas antes de enviarlas
+        const keys = subscription.keys ? JSON.parse(subscription.keys) : null;
+        if (!keys || !keys.p256dh || !keys.auth) {
+          console.error('Claves de suscripción incompletas:', subscription);
+          return;
+        }
+
+        // Enviar la notificación solo si las claves son válidas
+        webpush.sendNotification(subscription.endpoint, payload, {
+          keys: keys  // Usamos las claves correctamente formateadas
+        }).catch(error => {
+          console.error('Error al enviar notificación:', error);
+        });
+      } catch (error) {
+        console.error('Error al procesar la suscripción:', error);
+      }
+    });
+
     res.status(201).json(nuevoProducto);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error al crear el producto.' });
   }
 }
+
 
 
 //Busqueda de productos por letra o nombre xd
@@ -420,6 +459,7 @@ module.exports = {
   deleteProducto,
   updateProductosExistencias,
   BuscarProductoEnOfertaPorNombre,
-  BuscarProductoPorNombres
+  BuscarProductoPorNombres,
+  agregarSuscripcion 
   /*     BuscarProductoPorMarca */
 };
