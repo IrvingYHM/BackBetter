@@ -124,7 +124,7 @@ async function createProductos(req, res) {
     // Recuperamos todas las suscripciones desde la base de datos
     const suscripciones = await Suscripcion.findAll();
 
-    // Enviar notificaciones a cada suscripción
+    // Enviar notificaciones a cada suscripciónsssa
     const payload = JSON.stringify({
       title: 'Nuevo producto agregado',
       body: `Se ha agregado ${vchNombreProducto} al catálogo.`,
