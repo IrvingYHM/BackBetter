@@ -13,7 +13,7 @@ const mercadopago = require('mercadopago');
                     currency_id: "MXN",
                     quantity: 1,
                 }
-            ],
+            ], 
             back_urls:{
                 success: "http://localhost:3000/success",
                 failure: "http://localhost:3000/failure",

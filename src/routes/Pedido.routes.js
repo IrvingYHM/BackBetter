@@ -7,5 +7,4 @@ router.get('/Pedido', Pedido.getAllPedidos)
 router.post('/agregar', Pedido.createPedido)
 router.get('/IdPedido',Pedido.getPedidoId)
 
-
 module.exports = router;

@@ -8,4 +8,4 @@ router.post('/crearDetalle', DetallePedido.CrearDetallePedido)
 
 
 
-module.exports = router;
+module.exports = router; 

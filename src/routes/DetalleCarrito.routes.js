@@ -8,7 +8,7 @@ router.get('/', DetalleCarritoController.VerDetalleCarrito);
 router.post('/crear', DetalleCarritoController.createDetalleCarrito);
 router.delete('/eliminarCa', DetalleCarritoController.eliminarDetalleCarrito);
 
-
+ 
 
 // Ruta para crear un nuevo cliente
 /* router.post('/', clienteController.createCliente); */

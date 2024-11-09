@@ -48,7 +48,7 @@ DetalleCarrito.init({
   },
   IdCarrito: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false 
   },
 }, {
   sequelize,
