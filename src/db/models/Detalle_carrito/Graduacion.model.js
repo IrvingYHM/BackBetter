@@ -23,7 +23,7 @@ Graduacion.init({
 }, {
   sequelize,
   modelName: 'Graduacion',
-  tableName: 'tblGraduacion',
+  tableName: 'tblgraduacion',
   timestamps: false // Si la tabla no tiene campos de timestamp, puedes omitir esta línea
 });
 
