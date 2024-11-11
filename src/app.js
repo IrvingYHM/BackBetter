@@ -29,6 +29,7 @@ const TipoCita = require('./routes/TipoCita.routes');
 const EstadoCita = require('./routes/EstadoCita.routes');
 const Horarios = require("./routes/Horarios.routes");
 const Stripe = require("./routes/Metodostripe.routes")
+const Suscripcion = require("./routes/suscripcion.routes")
 
 
 const direc_ClientRouter = require("./routes/Direc_Client.routes");
@@ -108,6 +109,7 @@ app.use('/productos', Producto);
 app.use('/DetalleCarrito', DetalleCarrito);
 app.use('/Carrito', Carrito);
 app.use('/stripe', Stripe);
+app.use('/suscripcion', Suscripcion);
 app.use('/',paymenRoute);
 app.use('/',Graduaciones);
 app.use('/',Tratamientos);
@@ -142,6 +144,8 @@ const port = process.env.PORT || 3000;
 app.get('/', (req,res) => {
     res.send('Backend con NodeJS - Express + CRUD API REST + MySQL');
 });
+
+
 
 
 routerApi(app);

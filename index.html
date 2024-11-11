@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prueba de Notificaciones Push</title>
+</head>
+<body>
+  <h1>Prueba de Notificaciones Push</h1>
+  <button id="subscribe">Suscribirse a Notificaciones</button>
+
+  <script src="https://unpkg.com/idb-keyval@6.1.0/dist/umd.js"></script>
+  <script>
+    // Configura las claves públicas
+    const publicVapidKey = 'BPHOXfset_t5aRNQy7WAhteVfdNhvahptMcNQh2i5WpQ-bsziDYAOEalOZLMfBqV5URaAxbl2GcxjbfApjJ2oMI';
+    
+    // Función para convertir la clave pública en formato VAPID a un tipo adecuado
+    function urlBase64ToUint8Array(base64String) {
+      const padding = '='.repeat((4 - base64String.length % 4) % 4);
+      const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+      const rawData = window.atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+      
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray;
+    }
+
+    // Registrar el service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(function(registration) {
+        console.log('Service Worker registrado con éxito:', registration);
+      }).catch(function(error) {
+        console.error('Error al registrar el Service Worker:', error);
+      });
+    }
+
+    // Función para manejar la suscripción
+    document.getElementById('subscribe').addEventListener('click', async function() {
+      const swRegistration = await navigator.serviceWorker.ready;
+      
+      const subscription = await swRegistration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+      });
+      
+      // Enviar la suscripción al backend
+      fetch('http://localhost:3000/productos/suscripcion', {
+        method: 'POST',
+        body: JSON.stringify(subscription),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Suscripción guardada:', data);
+      })
+      .catch(err => {
+        console.error('Error al guardar la suscripción:', err);
+      });
+    });
+  </script>
+</body>
+</html>
