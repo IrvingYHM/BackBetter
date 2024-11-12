@@ -28,8 +28,8 @@ const Cita = require('./routes/Cita.routes');
 const TipoCita = require('./routes/TipoCita.routes');
 const EstadoCita = require('./routes/EstadoCita.routes');
 const Horarios = require("./routes/Horarios.routes");
-const Stripe = require("./routes/Metodostripe.routes")
-const Suscripcion = require("./routes/suscripcion.routes")
+/* const Stripe = require("./routes/Metodostripe.routes")
+ */const Suscripcion = require("./routes/suscripcion.routes")
 
 const Stripe = require('stripe');
 const createPaymentIntent = require('./services/stripePayment'); 
