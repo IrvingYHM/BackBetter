@@ -125,13 +125,11 @@ async function desactivarProducto(req, res) {
         ]
       });
   
-      // Enviar la notificación a cada suscripción activa
       suscripciones.forEach(subscription => {
         try {
           const keys = subscription.Keys ? JSON.parse(subscription.Keys) : null;
           if (!keys || !keys.p256dh || !keys.auth) return;
   
-          // Enviar notificación usando webpush
           webpush.sendNotification({
             endpoint: subscription.Endpoint,
             keys: {
@@ -144,7 +142,6 @@ async function desactivarProducto(req, res) {
         }
       });
   
-      // Responder con el producto creado
       res.status(201).json(nuevoProducto);
     } catch (error) {
       console.error(error);
