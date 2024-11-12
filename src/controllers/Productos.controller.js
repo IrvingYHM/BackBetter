@@ -112,7 +112,7 @@ async function desactivarProducto(req, res) {
       const payload = JSON.stringify({
         title: 'Nuevo producto agregado',
         body: `Se ha agregado ${vchNombreProducto} al catálogo.`,
-        icon: '../img/notificacion.jpg',  // Puede ser personalizado o tomar desde el producto
+        icon: '../img/notificacion.jpg',  
         image: result.url,  
         vibrate: [100, 50, 100],  
         actions: [
