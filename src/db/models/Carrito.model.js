@@ -8,7 +8,7 @@ class Carrito extends Model {}
 Carrito.init({
   IdCarrito: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: false, 
     primaryKey: true,
     autoIncrement: true
   },
