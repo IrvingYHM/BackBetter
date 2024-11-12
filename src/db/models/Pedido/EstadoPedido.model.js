@@ -21,4 +21,4 @@ EstadoPedido.init({
   timestamps: false
 });
 
-module.exports = EstadoPedido;
+module.exports = EstadoPedido; 
