@@ -78,68 +78,79 @@ async function desactivarProducto(req, res) {
   }
 }
 
-// Almacén temporal de suscripciones (puedes moverlo a un archivo global o usar base de datos si prefieres)
-let suscripciones = []; 
 
-// Función para manejar suscripciones (puedes mover esto a otro archivo si lo necesitas)
-/* function agregarSuscripcion(subscription) {
-  suscripciones.push(subscription);
-} */
 
-// Función para agregar un nuevo producto y enviar notificación
-async function createProductos(req, res) {
-  const { vchNombreProducto, vchDescripcion, Existencias, IdCategoria, IdMarca, Precio, EnOferta, PrecioOferta } = req.body;
-
-  try {
-    if (!req.files || !req.files.image) {
-      return res.status(400).json({ message: 'No se ha seleccionado ningún archivo.' });
-    }
-
-    const file = req.files.image;
-    const result = await cloudinary.uploader.upload(file.tempFilePath, { folder: 'Productos' });
-
-    const nuevoProducto = await Productos.create({
-      vchNombreProducto,
-      vchNomImagen: result.url,
-      vchDescripcion,
-      Existencias,
-      IdCategoria,
-      IdMarca,
-      Precio,
-      EnOferta,
-      PrecioOferta
-    });
-
-    // Notificar a las suscripciones activas
-    const suscripciones = await Suscripcion.findAll();
-    const payload = JSON.stringify({
-      title: 'Nuevo producto agregado',
-      body: `Se ha agregado ${vchNombreProducto} al catálogo.`,
-      icon: '../img/notificacion.jpg'
-    });
-
-    suscripciones.forEach(subscription => {
-      try {
-        const keys = subscription.keys ? JSON.parse(subscription.keys) : null;
-        if (!keys || !keys.p256dh || !keys.auth) return;
-        webpush.sendNotification({
-          endpoint: subscription.endpoint,
-          keys: {
-            p256dh: keys.p256dh,
-            auth: keys.auth
-          }
-        }, payload).catch(console.error);
-      } catch (error) {
-        console.error('Error al enviar notificación:', error);
+  const createProductos = async (req, res) => {
+    const { vchNombreProducto, vchDescripcion, Existencias, IdCategoria, IdMarca, Precio, EnOferta, PrecioOferta } = req.body;
+  
+    try {
+      if (!req.files || !req.files.image) {
+        return res.status(400).json({ message: 'No se ha seleccionado ningún archivo.' });
       }
-    });
-
-    res.status(201).json(nuevoProducto);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error al crear el producto.' });
-  }
-}
+  
+      const file = req.files.image;
+      // Subir la imagen a Cloudinary y obtener la URL
+      const result = await cloudinary.uploader.upload(file.tempFilePath, { folder: 'Productos' });
+  
+      const nuevoProducto = await Productos.create({
+        vchNombreProducto,
+        vchNomImagen: result.url, 
+        vchDescripcion,
+        Existencias,
+        IdCategoria,
+        IdMarca,
+        Precio,
+        EnOferta,
+        PrecioOferta
+      });
+  
+      // Obtener suscripciones activas
+      const suscripciones = await Suscripcion.findAll({
+        where: { Estado: 'activo' }  
+      });
+  
+      const payload = JSON.stringify({
+        title: 'Nuevo producto agregado',
+        body: `Se ha agregado ${vchNombreProducto} al catálogo.`,
+        icon: '../img/notificacion.jpg',  // Puede ser personalizado o tomar desde el producto
+        image: result.url,  
+        vibrate: [100, 50, 100],  
+        actions: [
+          {
+            action: "explore",
+            title: "Ver detalles del producto",
+            icon: result.url,  
+            url: `https://opticenter-hue.vercel.app/lentes`  
+          }
+        ]
+      });
+  
+      // Enviar la notificación a cada suscripción activa
+      suscripciones.forEach(subscription => {
+        try {
+          const keys = subscription.Keys ? JSON.parse(subscription.Keys) : null;
+          if (!keys || !keys.p256dh || !keys.auth) return;
+  
+          // Enviar notificación usando webpush
+          webpush.sendNotification({
+            endpoint: subscription.Endpoint,
+            keys: {
+              p256dh: keys.p256dh,
+              auth: keys.auth
+            }
+          }, payload).catch(console.error);
+        } catch (error) {
+          console.error('Error al enviar notificación:', error);
+        }
+      });
+  
+      // Responder con el producto creado
+      res.status(201).json(nuevoProducto);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error al crear el producto.' });
+    }
+  };
 
 // Función para agregar suscripciones
 const agregarSuscripcion = async (req, res) => {

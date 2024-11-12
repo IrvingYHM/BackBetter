@@ -6,6 +6,6 @@ const { crearSuscripcion, enviarNotificacion } = require('../controllers/suscrip
 router.post('/suscribirse', crearSuscripcion);
 
 // Ruta para enviar una notificación
-router.post('/enviar-notificacion', enviarNotificacion);
+/* router.post('/enviar-notificacion', enviarNotificacion); */
 
 module.exports = router;
