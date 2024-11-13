@@ -34,6 +34,8 @@ const Horarios = require("./routes/Horarios.routes");
 const Stripe = require('stripe');
 const createPaymentIntent = require('./services/stripePayment'); 
 const actEdoPagoCartRoutes = require('./routes/ActEdoPagoCart'); 
+const paymentRoutes = require('./routes/PagoRoutes.rutes');
+//const createPaymentIntent = require('./services/stripePayment'); 
 
 const direc_ClientRouter = require("./routes/Direc_Client.routes");
 
@@ -129,9 +131,9 @@ app.use("/cita", Cita);
 app.use("/", TipoCita);
 app.use("/", EstadoCita);
 app.use("/horarios", Horarios);
-
-app.post('/create-payment-intent', createPaymentIntent);
-app.post('/carrito', actEdoPagoCartRoutes);  // Esta es la ruta base para las peticiones a este archivo
+app.use('/', paymentRoutes);
+//app.post('/create-payment-intent', createPaymentIntent);
+//app.post('/carrito', actEdoPagoCartRoutes);  // Esta es la ruta base para las peticiones a este archivo
 
 
 

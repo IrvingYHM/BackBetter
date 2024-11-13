@@ -17,7 +17,7 @@ Graduacion.init({
 }, {
   sequelize,
   modelName: 'Graduacion',
-  tableName: 'tblgraduaciones',
+  tableName: 'tblgraduacion',
   timestamps: false
 });
 
