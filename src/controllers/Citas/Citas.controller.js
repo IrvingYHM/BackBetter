@@ -1,8 +1,6 @@
 // src/controllers/Citas/cita.controller.js
 const Cita = require("../../db/models/Citas/Cita.model");
 const TipoCita = require("../../db/models/Citas/TipoCita.model");
-const  Suscripcion  = require('../../db/models/suscripciones.model'); // Asegúrate de que la importación sea correcta
-
 
 // Obtener todas las citas
 async function getCitas(req, res) {
@@ -49,83 +47,10 @@ async function getCitaById(req, res) {
   }
 }
 
+
+
 // Crear una nueva cita
 async function createCita(req, res) {
-  try {
-    const {
-      Fecha,
-      Hora,
-      IdCliente,
-      IdTipoCita,
-      Costo,
-      IdEstadoCita,
-      Observaciones,
-      DescripcionT,
-    } = req.body;
-
-    // Verifica que IdTipoCita exista en la tabla tbltipo_cita antes de crear la cita
-    const tipoCitaExiste = await TipoCita.findByPk(IdTipoCita);
-    if (!tipoCitaExiste) {
-      return res.status(400).json({ message: "El tipo de cita no existe" });
-    }
-
-    const nuevaCita = await Cita.create({
-      Fecha,
-      Hora,
-      IdCliente,
-      IdTipoCita,
-      Costo,
-      IdEstadoCita,
-      Observaciones,
-      DescripcionT,
-    });
-
-    // Obtener suscripciones activas del cliente
-    const suscripciones = await Suscripcion.findAll({
-      where: { IdCliente, Estado: 'activo' }
-    });
-
-    const payload = JSON.stringify({
-      title: 'Nueva cita agendada',
-      body: `Tienes una cita programada para el ${Fecha} a las ${Hora}.`,
-      icon: '/img/notificacion.jpg',
-      vibrate: [100, 50, 100],
-      actions: [
-        {
-          action: "view",
-          title: "Ver detalles de la cita",
-          url: `https://opticenter-hue.vercel.app/citas/${nuevaCita.id}` // URL donde se puede ver la cita
-        }
-      ]
-    });
-
-    // Enviar notificaciones a las suscripciones del cliente
-    suscripciones.forEach(subscription => {
-      try {
-        const keys = subscription.Keys ? JSON.parse(subscription.Keys) : null;
-        if (!keys || !keys.p256dh || !keys.auth) return;
-
-        webpush.sendNotification({
-          endpoint: subscription.Endpoint,
-          keys: {
-            p256dh: keys.p256dh,
-            auth: keys.auth
-          }
-        }, payload).catch(console.error);
-      } catch (error) {
-        console.error('Error al enviar notificación:', error);
-      }
-    });
-
-    res.status(201).json(nuevaCita);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error al crear la cita' });
-  }
-}
-
-// Crear una nueva cita
-/* async function createCita(req, res) {
   try {
     const {
       Fecha,
@@ -160,7 +85,7 @@ async function createCita(req, res) {
     console.error(error);
     res.status(500).json({ message: "Error al crear la cita" });
   }
-} */
+}
 
 // Actualizar una cita existente
 async function updateCita(req, res) {
