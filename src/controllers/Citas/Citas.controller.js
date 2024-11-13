@@ -47,9 +47,7 @@ async function getCitaById(req, res) {
   }
 }
 
-
-
-// Crear una nueva cita
+// Crear una nueva cita nueva
 async function createCita(req, res) {
   try {
     const {
