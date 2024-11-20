@@ -23,6 +23,8 @@ const Valoracion = require('./routes/Valoraciones.routes');
 const Direc_Empleado = require('./routes/Direc_Empleado.routes');
 const EstadoEnvio = require('./routes/EstadoEnvio.routes')
 const EstadoPedido  = require('./routes/EstadoPedido.routes')
+const Encuesta  = require('./routes/feedback.routes')
+
 
 const Cita = require('./routes/Cita.routes');
 const TipoCita = require('./routes/TipoCita.routes');
@@ -126,6 +128,8 @@ app.use('/',Valoracion);
 app.use('/', Direc_Empleado);
 app.use("/", EstadoEnvio);
 app.use("/", EstadoPedido);
+app.use("/", Encuesta);
+
 
 app.use("/cita", Cita);
 app.use("/", TipoCita);
