@@ -1,12 +1,11 @@
 const Encuesta = require('../db/models/feedback.model'); // Modelo de la encuesta
 
-// Función para crear la encuesta
 const crearEncuesta = async (req, res) => {
     try {
-        const { idUsuario, respuestas } = req.body;
+        const { idUsuario, respuestas, preguntas } = req.body;
 
         // Validación básica
-        if (!idUsuario || !respuestas) {
+        if (!idUsuario || !respuestas || !preguntas) {
             return res.status(400).json({ message: 'Faltan datos para guardar la encuesta.' });
         }
 
@@ -26,9 +25,9 @@ const crearEncuesta = async (req, res) => {
         const encuestas = await Promise.all(
             Object.entries(respuestas).map(([index, calificacion]) =>
                 Encuesta.create({
-                    idUsuario: idUsuario, // Asociar con el usuario
+                    idUsuario: idUsuario,
                     modulo: 'Citas',
-                    pregunta: `Pregunta ${parseInt(index) + 1}`,
+                    pregunta: preguntas[index], // Guardar la pregunta específica
                     tipoPregunta: 'Cerrada',
                     respuesta: `Estrellas: ${calificacion}`,
                 })
@@ -44,6 +43,7 @@ const crearEncuesta = async (req, res) => {
         res.status(500).json({ message: 'Error al guardar la encuesta.', error: error.message });
     }
 };
+
 
 // Función para verificar si el usuario ya completó la encuesta
 const verificarEncuesta = async (req, res) => {
