@@ -66,7 +66,7 @@ Cliente.init({
   },
    foto: {
     type: DataTypes.STRING(250),
-    allowNull: false
+    allowNull: true
   } 
 }, 
 {
