@@ -84,10 +84,16 @@ const obtenerResultadosEncuestas = async (req, res) => {
 
         // Procesar las respuestas para cada pregunta
         const respuestasPorPregunta = {};
+        const usuariosUnicos = new Set(); // Set para almacenar IDs únicos de usuarios
 
         // Contar las respuestas por cada pregunta
         encuestas.forEach((encuesta) => {
-            const { pregunta, respuesta } = encuesta;
+            const { pregunta, respuesta, idUsuario } = encuesta;
+
+            // Agregar el ID del usuario al set para contar usuarios únicos
+            if (idUsuario) {
+                usuariosUnicos.add(idUsuario);
+            }
 
             // Si la pregunta no existe en el objeto, la inicializamos
             if (!respuestasPorPregunta[pregunta]) {
@@ -103,6 +109,9 @@ const obtenerResultadosEncuestas = async (req, res) => {
             }
         });
 
+        // Contar el total de personas únicas
+        const totalPersonas = usuariosUnicos.size;
+
         // Formateamos los datos para la gráfica
         const resultados = Object.keys(respuestasPorPregunta).map((pregunta) => {
             return {
@@ -111,9 +120,11 @@ const obtenerResultadosEncuestas = async (req, res) => {
             };
         });
 
+        // Enviar respuesta con ambos datos
         res.status(200).json({
             message: 'Resultados de las encuestas obtenidos con éxito',
-            data: resultados
+            totalPersonas, // Número de usuarios únicos
+            data: resultados // Resultados de las encuestas
         });
     } catch (error) {
         console.error("Error al obtener resultados de la encuesta:", error);
