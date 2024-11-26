@@ -74,23 +74,56 @@ const obtenerResultadosEncuestas = async (req, res) => {
     try {
         // Obtener todas las encuestas relacionadas con el módulo 'Citas'
         const encuestas = await Encuesta.findAll({
-            where: { modulo: 'Citas' },
-            attributes: ['idUsuario'] // Solo necesitamos el campo que identifica al usuario
+            where: { modulo: 'Citas' }
         });
 
         if (!encuestas || encuestas.length === 0) {
             return res.status(404).json({ message: 'No hay encuestas completadas aún.' });
         }
 
-        // Obtener los IDs únicos de los usuarios
-        const usuariosUnicos = new Set(encuestas.map(encuesta => encuesta.idUsuario));
+        // Procesar las respuestas para cada pregunta
+        const respuestasPorPregunta = {};
+        const usuariosUnicos = new Set(); // Set para almacenar IDs únicos de usuarios
 
-        // Contar los usuarios únicos
+        // Contar las respuestas por cada pregunta
+        encuestas.forEach((encuesta) => {
+            const { pregunta, respuesta, idUsuario } = encuesta;
+
+            // Agregar el ID del usuario al set para contar usuarios únicos
+            if (idUsuario) {
+                usuariosUnicos.add(idUsuario);
+            }
+
+            // Si la pregunta no existe en el objeto, la inicializamos
+            if (!respuestasPorPregunta[pregunta]) {
+                respuestasPorPregunta[pregunta] = { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 };
+            }
+
+            // Extraemos el valor de la calificación (asumimos que el formato es 'Estrellas: X')
+            const calificacion = respuesta.replace('Estrellas: ', '');
+
+            // Incrementamos el contador para la calificación correspondiente
+            if (respuestasPorPregunta[pregunta][calificacion] !== undefined) {
+                respuestasPorPregunta[pregunta][calificacion]++;
+            }
+        });
+
+        // Contar el total de personas únicas
         const totalPersonas = usuariosUnicos.size;
 
+        // Formateamos los datos para la gráfica
+        const resultados = Object.keys(respuestasPorPregunta).map((pregunta) => {
+            return {
+                pregunta,
+                respuestas: respuestasPorPregunta[pregunta]
+            };
+        });
+
+        // Enviar respuesta con ambos datos
         res.status(200).json({
-            message: 'Cantidad de personas que han respondido la encuesta obtenida con éxito',
-            totalPersonas // Nuevo campo con el total de personas únicas
+            message: 'Resultados de las encuestas obtenidos con éxito',
+            totalPersonas, // Número de usuarios únicos
+            data: resultados // Resultados de las encuestas
         });
     } catch (error) {
         console.error("Error al obtener resultados de la encuesta:", error);
