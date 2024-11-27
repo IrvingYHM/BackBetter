@@ -20,20 +20,25 @@ Encuesta.init({
   },
   pregunta: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: true,
   },
   tipoPregunta: {
     type: DataTypes.ENUM('Cerrada', 'Abierta'),
-    allowNull: false,
+    allowNull: true,
   },
   respuesta: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: true,
   },
   fechaRespuesta: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
     defaultValue: DataTypes.NOW,
+  },
+  estado: {
+    type: DataTypes.ENUM('Pendiente', 'Realizado'),
+    allowNull: false,
+    defaultValue: 'Pendiente', // Las encuestas nuevas comienzan en "Pendiente"
   },
 }, {
   sequelize,
