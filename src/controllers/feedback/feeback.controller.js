@@ -110,9 +110,54 @@ const obtenerEncuestaPendiente = async (req, res) => {
   };
   
 
+
+ // Función para obtener los resultados de las encuestas completadas
+const obtenerResultadosEncuestas = async (req, res) => {
+    try {
+      // Obtener todas las encuestas completadas
+      const encuestasCompletadas = await Encuesta.findAll({
+        where: { estado: 'Realizado' },
+      });
+  
+      if (encuestasCompletadas.length === 0) {
+        return res.status(200).json({ mensaje: "No hay encuestas completadas." });
+      }
+  
+      // Inicializar el objeto de resultados por calificación (1-5) para cada pregunta
+      const resultados = {
+        question1: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 },
+        question2: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 },
+        question3: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 },
+        question4: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 },
+        question5: { "1": 0, "2": 0, "3": 0, "4": 0, "5": 0 }
+      };
+  
+      // Contabilizar las respuestas de cada encuesta
+      encuestasCompletadas.forEach(encuesta => {
+        // Aquí supondremos que las respuestas son números entre 1 y 5 para cada pregunta
+        for (let i = 1; i <= 5; i++) {
+          if (encuesta[`question${i}`]) {
+            resultados[`question${i}`][encuesta[`question${i}`]]++;
+          }
+        }
+      });
+  
+      // Calcular el total de personas que respondieron la encuesta
+      const totalPersonas = encuestasCompletadas.length;
+  
+      // Responder con los resultados de las preguntas y el total de personas
+      res.status(200).json({ data: resultados, totalPersonas: totalPersonas });
+    } catch (error) {
+      console.error("Error al obtener los resultados de las encuestas:", error);
+      return res.status(500).json({ error: "Error al obtener los resultados de las encuestas.", detalles: error.message });
+    }
+  };
+  
+
 module.exports = {
   registrarAccesoFeedback,
   completarEncuesta,
   obtenerEncuestaPendiente, 
+  obtenerResultadosEncuestas,
 
 };

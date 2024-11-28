@@ -11,6 +11,8 @@ router.put("/Encuesta/actualizarEncuesta", Feedback.actualizarEncuesta); */
 router.post("/feedback/acceso", Feedback.registrarAccesoFeedback);
 router.put("/feedback/completar", Feedback.completarEncuesta);
 router.post("/feedback/pendiente", Feedback.obtenerEncuestaPendiente);
+router.get("/feedback/obtenerResultadosEncuestas", Feedback.obtenerResultadosEncuestas);
+
 
 
 
