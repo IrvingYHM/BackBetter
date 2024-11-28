@@ -25,6 +25,8 @@ const EstadoEnvio = require('./routes/EstadoEnvio.routes')
 const EstadoPedido  = require('./routes/EstadoPedido.routes')
 const Encuesta  = require('./routes/feedback.routes')
 const EncuestaM = require('./routes/feedbackMovil.routes')
+const Feedback = require('./routes/FeedbackWeb.routes')
+
 
 
 const Cita = require('./routes/Cita.routes');
@@ -131,6 +133,11 @@ app.use("/", EstadoEnvio);
 app.use("/", EstadoPedido);
 app.use("/", Encuesta);
 app.use("/", EncuestaM);
+app.use("/", Feedback);
+
+
+
+
 
 
 app.use("/cita", Cita);
