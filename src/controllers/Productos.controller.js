@@ -79,124 +79,99 @@ async function desactivarProducto(req, res) {
 }
 
 
-//crear producto
-async function createProductos(req, res) {
-  const { 
+
+const createProductos = async (req, res) => {
+  const {
     vchNombreProducto,
-    vchDescripcion, 
-    Existencias, 
-    IdCategoria, 
+    vchDescripcion,
+    Existencias,
+    IdCategoria,
     IdMarca,
     Precio,
     EnOferta,
-    PrecioOferta
+    PrecioOferta,
   } = req.body;
 
   try {
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).json({ message: 'No se ha seleccionado ningún archivo.' });
+    console.log("Paso 1: Datos recibidos:", req.body);
+    console.log("Paso 2: Archivos recibidos:", req.files);
+
+    if (!req.files || !req.files.image) {
+      console.log("Error: No se recibió archivo de imagen");
+      return res
+        .status(400)
+        .json({ message: "No se ha seleccionado ningún archivo." });
     }
 
-    const file = req.files.image; // 'image' es el nombre del campo en el formulario
-
-    // Subir la imagen a Cloudinary
+    const file = req.files.image;
     const result = await cloudinary.uploader.upload(file.tempFilePath, {
-      folder: 'Productos'
+      folder: "Productos",
     });
-    
-    console.log(result)
+    console.log("Paso 3: Imagen subida a Cloudinary. URL:", result.url);
 
-
-    // Guardar la URL de la imagen en la base de datos
     const nuevoProducto = await Productos.create({
       vchNombreProducto,
       vchNomImagen: result.url,
       vchDescripcion,
-      Existencias, 
-      IdCategoria, 
+      Existencias,
+      IdCategoria,
       IdMarca,
       Precio,
       EnOferta,
-      PrecioOferta
+      PrecioOferta,
+    });
+    console.log("Paso 4: Producto creado en DB. ID:", nuevoProducto.id);
+
+    // Notificaciones...
+    const suscripciones = await Suscripcion.findAll({
+      where: { Estado: "activo" },
     });
 
-    res.status(201).json(nuevoProducto);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error al crear el producto.' });
-  }
-}
+    const payload = JSON.stringify({
+      title: "Nuevo producto agregado",
+      body: `Se ha agregado ${vchNombreProducto} al catálogo.`,
+      icon: "../img/notificacion.jpg",
+      image: result.url,
+      vibrate: [100, 50, 100],
+      actions: [
+        {
+          action: "explore",
+          title: "Ver detalles del producto",
+          icon: result.url,
+          url: `https://opticenter-hue.vercel.app/lentes`,
+        },
+      ],
+    });
 
+    for (const subscription of suscripciones) {
+      try {
+        const keys = subscription.Keys ? JSON.parse(subscription.Keys) : null;
+        if (!keys || !keys.p256dh || !keys.auth) continue;
 
-
-  /* const createProductos = async (req, res) => {
-    const { vchNombreProducto, vchDescripcion, Existencias, IdCategoria, IdMarca, Precio, EnOferta, PrecioOferta } = req.body;
-  
-    try {
-      if (!req.files || !req.files.image) {
-        return res.status(400).json({ message: 'No se ha seleccionado ningún archivo.' });
-      }
-  
-      const file = req.files.image;
-      // Subir la imagen a Cloudinary y obtener la URL
-      const result = await cloudinary.uploader.upload(file.tempFilePath, { folder: 'Productos' });
-  
-      const nuevoProducto = await Productos.create({
-        vchNombreProducto,
-        vchNomImagen: result.url, 
-        vchDescripcion,
-        Existencias,
-        IdCategoria,
-        IdMarca,
-        Precio,
-        EnOferta,
-        PrecioOferta
-      });
-  
-      // Obtener suscripciones activas
-      const suscripciones = await Suscripcion.findAll({
-        where: { Estado: 'activo' }  
-      });
-  
-      const payload = JSON.stringify({
-        title: 'Nuevo producto agregado',
-        body: `Se ha agregado ${vchNombreProducto} al catálogo.`,
-        icon: '../img/notificacion.jpg',  
-        image: result.url,  
-        vibrate: [100, 50, 100],  
-        actions: [
+        await webpush.sendNotification(
           {
-            action: "explore",
-            title: "Ver detalles del producto",
-            icon: result.url,  
-            url: `https://opticenter-hue.vercel.app/lentes`  
-          }
-        ]
-      });
-  
-      suscripciones.forEach(subscription => {
-        try {
-          const keys = subscription.Keys ? JSON.parse(subscription.Keys) : null;
-          if (!keys || !keys.p256dh || !keys.auth) return;
-  
-          webpush.sendNotification({
             endpoint: subscription.Endpoint,
             keys: {
               p256dh: keys.p256dh,
-              auth: keys.auth
-            }
-          }, payload).catch(console.error);
-        } catch (error) {
-          console.error('Error al enviar notificación:', error);
-        }
-      });
-  
-      res.status(201).json(nuevoProducto);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error al crear el producto.' });
+              auth: keys.auth,
+            },
+          },
+          payload
+        );
+      } catch (error) {
+        console.error("Error al enviar notificación:", error.message);
+      }
     }
-  }; */
+
+    console.log("Paso 5: Notificaciones enviadas");
+    res.status(201).json(nuevoProducto);
+  } catch (error) {
+    console.error("🚨 Error en createProductos:", error.message);
+    res
+      .status(500)
+      .json({ message: "Error al crear el producto.", error: error.message });
+  }
+};
 
 // Función para agregar suscripciones
 const agregarSuscripcion = async (req, res) => {
