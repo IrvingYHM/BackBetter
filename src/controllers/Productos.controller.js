@@ -79,8 +79,57 @@ async function desactivarProducto(req, res) {
 }
 
 
+//crear producto
+async function createProductos(req, res) {
+  const { 
+    vchNombreProducto,
+    vchDescripcion, 
+    Existencias, 
+    IdCategoria, 
+    IdMarca,
+    Precio,
+    EnOferta,
+    PrecioOferta
+  } = req.body;
 
-  const createProductos = async (req, res) => {
+  try {
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).json({ message: 'No se ha seleccionado ningún archivo.' });
+    }
+
+    const file = req.files.image; // 'image' es el nombre del campo en el formulario
+
+    // Subir la imagen a Cloudinary
+    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+      folder: 'Productos'
+    });
+    
+    console.log(result)
+
+
+    // Guardar la URL de la imagen en la base de datos
+    const nuevoProducto = await Productos.create({
+      vchNombreProducto,
+      vchNomImagen: result.url,
+      vchDescripcion,
+      Existencias, 
+      IdCategoria, 
+      IdMarca,
+      Precio,
+      EnOferta,
+      PrecioOferta
+    });
+
+    res.status(201).json(nuevoProducto);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al crear el producto.' });
+  }
+}
+
+
+
+  /* const createProductos = async (req, res) => {
     const { vchNombreProducto, vchDescripcion, Existencias, IdCategoria, IdMarca, Precio, EnOferta, PrecioOferta } = req.body;
   
     try {
@@ -147,7 +196,7 @@ async function desactivarProducto(req, res) {
       console.error(error);
       res.status(500).json({ message: 'Error al crear el producto.' });
     }
-  };
+  }; */
 
 // Función para agregar suscripciones
 const agregarSuscripcion = async (req, res) => {
