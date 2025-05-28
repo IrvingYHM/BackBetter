@@ -30,7 +30,7 @@ Productos.init({
     allowNull: true
   },
   vchDescripcion: {
-    type: DataTypes.STRING(255),
+    type: DataTypes.TEXT,
     allowNull: false
   },
   Existencias: {
