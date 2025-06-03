@@ -61,24 +61,24 @@ Productos.init({
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: false
-  },/* 
+  },
   PrecioOriginal: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true
-  }, */
+  },
   PrecioOferta: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: true
   },
 
-  IdGraduacion: {
+/*   IdGraduacion: {
     type: DataTypes.INTEGER,
     allowNull: false,
     references: {
       model: Graduacion,
       key: 'IdGraduacion'
     }
-  },
+  }, */
 }, {
   sequelize,
   modelName: 'Productos',
