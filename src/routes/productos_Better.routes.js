@@ -20,37 +20,37 @@ const storage = multer.diskStorage({
   const upload = multer({ storage: storage });
 
 // Ruta para iniciar sesión
-router.get('/Productos_Better', authControllerProductos.getProductos); // Utilizar el método login del controlador de autenticación
-router.get('/ProductosOfertas_Better', authControllerProductos.getProductosOfertas); // Utilizar el método login del controlador de autenticación
+router.get('/Productos', authControllerProductos.getProductos); // Utilizar el método login del controlador de autenticación
+router.get('/ProductosOfertas', authControllerProductos.getProductosOfertas); // Utilizar el método login del controlador de autenticación
 
 
-router.post("/suscripcion_Better", authControllerProductos.agregarSuscripcion);
+router.post("/suscripcion", authControllerProductos.agregarSuscripcion);
 
 
 
-router.post("/Crear_productos_Better", authControllerProductos.createProductos);
+router.post("/Crear_productos", authControllerProductos.createProductos);
 /* router.post('/Crear_productos', upload.single('imagen'), authControllerProductos.createProductos) */
 
-router.get("/Buscar_productos_Better", authControllerProductos.BuscarProducto);
-router.get('/filtro_producto_Better', authControllerProductos.BuscarProductoPorCategoria);
-router.post('/productosId_Better', authControllerProductos.ProductoPorIdParadetalle);
-router.post('/update_Better', authControllerProductos.updateProductosExistencias);
-router.get('/find_Better/:nombre', authControllerProductos.BuscarProductoEnOfertaPorNombre);
+router.get("/Buscar_productos", authControllerProductos.BuscarProducto);
+router.get('/filtro_producto', authControllerProductos.BuscarProductoPorCategoria);
+router.post('/productosId', authControllerProductos.ProductoPorIdParadetalle);
+router.post('/update', authControllerProductos.updateProductosExistencias);
+router.get('/find/:nombre', authControllerProductos.BuscarProductoEnOfertaPorNombre);
 
 
 
 
 
 
-router.get("/Productos_Better/:id", authControllerProductos.ProductoPorId); 
-router.put("/Productos_Better/:id", authControllerProductos.updateProducto); 
-router.delete("/Productos_Better/:id", authControllerProductos.deleteProducto);
-router.put('/desactivar_Better/:id', authControllerProductos.desactivarProducto);
+router.get("/Productos/:id", authControllerProductos.ProductoPorId); 
+router.put("/Productos/:id", authControllerProductos.updateProducto); 
+router.delete("/Productos/:id", authControllerProductos.deleteProducto);
+router.put('/desactivar/:id', authControllerProductos.desactivarProducto);
 /* router.get('/filtro_Marca', authControllerProductos.BuscarProductoPorMarca); */
 /* 
 BuscarProductoPorMarca */
 
-router.get('/Buscar_productos_Better/:nombre', authControllerProductos.BuscarProductoPorNombres);
+router.get('/Buscar_productos/:nombre', authControllerProductos.BuscarProductoPorNombres);
 
 /* 
 /filtro_producto?Categoria=valor&graduacion=valor&marca=valor */

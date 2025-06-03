@@ -9,6 +9,7 @@ const authRouter = require('./routes/login.routes'); //
 const morgan = require('morgan');
 const Empleado = require('./routes/Empleados.routes');
 const Producto = require('./routes/productos.routes');
+const Producto_Better = require("./routes/productos_Better.routes");
 const fileupload = require('express-fileupload');
 const DetalleCarrito = require('./routes/DetalleCarrito.routes');
 const Carrito = require('./routes/Carrito.routes');
@@ -116,6 +117,7 @@ app.use("/direcciones-clientes", direc_ClientRouter);
 app.use('/auth', authRouter); // Usa el enrutador de autenticación en la ruta /auth
 app.use('/empleados', Empleado);
 app.use('/productos', Producto);
+app.use("/productos_better", Producto_Better);
 app.use('/DetalleCarrito', DetalleCarrito);
 app.use('/Carrito', Carrito);
 app.use('/stripe', Stripe);
