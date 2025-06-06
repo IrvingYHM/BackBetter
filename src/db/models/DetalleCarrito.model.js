@@ -2,9 +2,7 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../libs/sequelize');
 const Productos = require ('./producto.model')
-const Graduacion = require ('./Detalle_carrito/Graduacion.model')
 const Carrito = require ('./Carrito.model')
-const Tratamiento = require ('./Detalle_carrito/Tratamiento.model')
 
 
 
@@ -19,14 +17,6 @@ DetalleCarrito.init({
     autoIncrement: true
   },
   IdProducto: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  IdGraduacion: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  IdTratamiento: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -58,8 +48,6 @@ DetalleCarrito.init({
 });
 
 DetalleCarrito.belongsTo(Productos, { foreignKey: 'IdProducto', as: 'producto' });
-DetalleCarrito.belongsTo(Graduacion, { foreignKey: 'IdGraduacion', as: 'graduacion' });
-DetalleCarrito.belongsTo(Tratamiento, { foreignKey: 'IdTratamiento', as: 'tratamiento' });
 DetalleCarrito.belongsTo(Carrito, { foreignKey: 'IdCarrito', as: 'carrito' });
 
 module.exports = DetalleCarrito;

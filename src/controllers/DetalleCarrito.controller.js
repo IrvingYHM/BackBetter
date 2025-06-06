@@ -3,8 +3,6 @@
 const Marca = require("../db/models/Marca.model"); */
 const DetalleCarrito = require ("../db/models/DetalleCarrito.model");
 const Productos = require("../db/models/producto.model");
-const Graduacion = require("../db/models/Detalle_carrito/Graduacion.model");
-const Tratamiento = require("../db/models/Detalle_carrito/Tratamiento.model");
 
 
 
@@ -13,8 +11,6 @@ async function VerDetalleCarrito(req, res) {
       const Carrito = await DetalleCarrito.findAll({
         include: [
           { model: Productos, as: "producto", attributes: ['IdProducto', 'vchNombreProducto', 'Precio'] },
-          { model: Graduacion, as: "graduacion", attributes: ['IdGraduacion', 'ValorGraduacion', 'Precio'] },
-          { model: Tratamiento, as: "tratamiento", attributes: ['IdTratamiento', 'Nombre', 'Precio'] },
         ],
       });
       res.json(Carrito);
@@ -48,8 +44,6 @@ async function VerDetalleCarrito(req, res) {
     const 
     { 
       IdProducto,
-      IdGraduacion, 
-      IdTratamiento, 
       Precio, 
       Descripcion, 
       SubTotal, 
@@ -61,8 +55,6 @@ async function VerDetalleCarrito(req, res) {
       // Crear el detalle de carrito utilizando el IdCarrito del carrito creado o existente
       const detalleCarrito = await DetalleCarrito.create({
         IdProducto,
-        IdGraduacion,
-        IdTratamiento,
         Precio,
         Descripcion,
         SubTotal,
