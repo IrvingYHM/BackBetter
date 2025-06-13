@@ -7,18 +7,26 @@ const Productos = require("../db/models/producto.model");
 
 
 async function VerDetalleCarrito(req, res) {
-    try {
-      const Carrito = await DetalleCarrito.findAll({
-        include: [
-          { model: Productos, as: "producto", attributes: ['IdProducto', 'vchNombreProducto', 'Precio'] },
-        ],
-      });
-      res.json(Carrito);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error al obtener el detalle carrito" });
-    }
+  try {
+    const userId = req.query.userId; // Obtener el userId de la solicitud
+
+    const Carrito = await DetalleCarrito.findAll({
+      where: { IdCliente: userId }, // Filtrar por el userId
+      include: [
+        {
+          model: Productos,
+          as: "producto",
+          attributes: ['IdProducto', 'vchNombreProducto', 'Precio', 'vchNomImagen', 'vchDescripcion']
+        }
+      ],
+    });
+
+    res.json(Carrito);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener el detalle del carrito" });
   }
+}
 
 /* 
   async function VerDetalleCarrito(req, res) {
