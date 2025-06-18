@@ -1,9 +1,7 @@
 // db/controllers/carrito.controller.js
 const Pedido = require("../../db/models/Pedido/Pedido.model");
 const DetallePedido = require('../../db/models/Pedido/DetallePedido.model');
-const Producto = require('../../db/models/producto.model'); // Importar el modelo Productos
-const Graduacion = require('../../db/models/Detalle_carrito/Graduacion.model');
-const Tratamiento = require('../../db/models/Detalle_carrito/Tratamiento.model'); 
+const Producto = require('../../db/models/productos_Better.model'); // Importar el modelo Productos
 
 /* const  tbldetallecarrito  = require('../db/models/DetalleCarrito.model');
 */
