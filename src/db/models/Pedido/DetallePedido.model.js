@@ -1,62 +1,50 @@
-const { Model, DataTypes } = require('sequelize');
-const sequelize = require('../../../libs/sequelize');
-const Graduacion = require('../Detalle_carrito/Graduacion.model')
-const Pedido = require('../Pedido/Pedido.model')
-const Tratamiento = require('../Detalle_carrito/Tratamiento.model');
-const Producto = require('../producto.model');
-
+const { Model, DataTypes } = require("sequelize");
+const sequelize = require("../../../libs/sequelize");
+const Pedido = require("../Pedido/Pedido.model");
 
 class DetallePedido extends Model {}
 
-DetallePedido.init({
-  IdDetallePedido: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-    autoIncrement: true
+DetallePedido.init(
+  {
+    IdDetallePedido: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    NombreProducto: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      comment: "Nombre del producto en el momento de la venta",
+    },
+    PrecioUnitario: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      comment: "Precio por unidad en el momento de la venta",
+    },
+    Cantidad: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    SubTotal: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      comment: "Cantidad * PrecioUnitario",
+    },
+    IdPedido: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
-  IdProducto: {
-    type: DataTypes.INTEGER,
-    allowNull: true
-  },
-  IdGraduacion: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  IdTratamiento: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  Precio: {
-    type: DataTypes.FLOAT,
-    allowNull: false
-  },
-  Descripcion: {
-    type: DataTypes.STRING,
-    allowNull: true
-  },
-  SubTotal: {
-    type: DataTypes.FLOAT,
-    allowNull: false
-  },
-  Cantidad: {
-    type: DataTypes.INTEGER,
-    allowNull: false
-  },
-  IdPedido: {
-    type: DataTypes.INTEGER,
-    allowNull: false
+  {
+    sequelize,
+    modelName: "DetallePedido",
+    tableName: "tbldetalle_pedido",
+    timestamps: false,
   }
-}, {
-  sequelize,
-  modelName: 'DetallePedido',
-  tableName: 'tbldetalle_pedido',
-  timestamps: false
-});
+);
 
-DetallePedido.belongsTo(Graduacion,{ foreignKey: 'IdGraduacion', as: 'Graduacion'});
-DetallePedido.belongsTo(Pedido, { foreignKey: 'IdPedido', as: 'Pedido'});
-DetallePedido.belongsTo(Tratamiento, { foreignKey: 'IdTratamiento', as: 'Tratamiento'});
-DetallePedido.belongsTo(Producto, { foreignKey: 'IdProducto', as: 'Producto'});
+// Relación con Pedido
+DetallePedido.belongsTo(Pedido, { foreignKey: "IdPedido", as: "Pedido" });
 
 module.exports = DetallePedido;
