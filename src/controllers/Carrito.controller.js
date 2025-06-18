@@ -1,9 +1,7 @@
 // db/controllers/carrito.controller.js
 const  Carrito  = require('../db/models/Carrito.model');
 const  tbldetallecarrito  = require('../db/models/DetalleCarrito.model');
-const Productos = require('../db/models/producto.model'); // Importar el modelo Productos
-const Graduacion = require('../db/models/Detalle_carrito/Graduacion.model');
-const Tratamiento = require('../db/models/Detalle_carrito/Tratamiento.model');
+const Productos = require('../db/models/productos_Better.model'); // Importar el modelo Productos
 
 
 
@@ -65,8 +63,6 @@ async function VerDetalleCarrito(req, res) {
       where: { IdCarrito: carrito.IdCarrito },
       include: [
         { model: Productos, as: "producto", attributes: ['IdProducto', 'vchNombreProducto','vchNomImagen', 'Precio'] },
-        { model: Graduacion, as: "graduacion", attributes: ['IdGraduacion', 'ValorGraduacion', 'Precio'] },
-        { model: Tratamiento, as: "tratamiento", attributes: ['IdTratamiento', 'Nombre', 'Precio'] },
       ],
     });
 
