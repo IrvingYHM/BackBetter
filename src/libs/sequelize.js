@@ -9,20 +9,12 @@ const setupModels = require("../db/models");
   }
 }); */
 
-const sequelize = new Sequelize(
-  config.dbName,
-  config.dbUser, //
-  config.dbPassword,
-  {
-    host: config.dbHost,
-    port: Number(config.dbPort),
-    dialect: "mysql",
-    dialectOptions: {
-      connectTimeout: 10000,
-    },
-    logging: false,
-  }
-);
+const sequelize = new Sequelize(process.env.MYSQL_URL, {
+  dialect: "mysql",
+  define: {
+    timestamps: false,
+  },
+});
 
 // Configura los modelos
 setupModels(sequelize);
