@@ -1,6 +1,7 @@
 const UneteEquipo = require("../db/models/UneteEquipo.model");
-const { uploader } = require("../libs/cloudinary");
 const fs = require("fs-extra");
+
+const cloudinary = require('../services/cloudinari')
 
 const createUneteEquipo = async (req, res) => {
   try {
@@ -10,7 +11,7 @@ const createUneteEquipo = async (req, res) => {
     let publicId = null;
 
     if (req.file) {
-      const result = await uploader.upload(req.file.path);
+      const result = await cloudinary.uploader.upload(req.file.path);
       imageUrl = result.secure_url;
       publicId = result.public_id;
       await fs.unlink(req.file.path);
@@ -52,8 +53,8 @@ const updateUneteEquipo = async (req, res) => {
     let publicId = registro.PublicId;
 
     if (req.file) {
-      if (publicId) await uploader.destroy(publicId);
-      const result = await uploader.upload(req.file.path);
+      if (publicId) await cloudinary.uploader.destroy(publicId);
+      const result = await cloudinary.uploader.upload(req.file.path);
       imageUrl = result.secure_url;
       publicId = result.public_id;
       await fs.unlink(req.file.path);
@@ -81,7 +82,7 @@ const deleteUneteEquipo = async (req, res) => {
 
     if (!registro) return res.status(404).json({ message: "No encontrado" });
 
-    if (registro.PublicId) await uploader.destroy(registro.PublicId);
+    if (registro.PublicId) await cloudinary.uploader.destroy(registro.PublicId);
 
     await registro.destroy();
     res.json({ message: "Eliminado correctamente" });
