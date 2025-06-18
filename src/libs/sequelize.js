@@ -11,20 +11,31 @@ const setupModels = require("../db/models");
 
 const sequelize = new Sequelize(
   config.dbName,
-  config.dbUser,//
+  config.dbUser, //
   config.dbPassword,
   {
     host: config.dbHost,
+    port: Number(config.dbPort),
     dialect: "mysql",
+    dialectOptions: {
+      connectTimeout: 10000,
+    },
+    logging: false,
   }
 );
-
-
 
 // Configura los modelos
 setupModels(sequelize);
 
-// Sincroniza los modelos con la base de datos
-sequelize.sync();
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Conexión establecida correctamente");
+    await sequelize.sync();
+    console.log("Modelos sincronizados con la base de datos");
+  } catch (error) {
+    console.error("Error al conectar con la base de datos:", error);
+  }
+})();
 
 module.exports = sequelize;
