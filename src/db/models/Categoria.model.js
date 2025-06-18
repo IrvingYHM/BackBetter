@@ -14,7 +14,9 @@ Categoria.init({
     type: DataTypes.STRING(50),
     allowNull: false
   }
-}, {
+}, 
+
+{
   sequelize,
   modelName: 'Categoria',
   tableName: 'tblcategorias',
