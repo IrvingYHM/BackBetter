@@ -2,7 +2,7 @@
 /* const Categoria = require("../db/models/Categoria.model");
 const Marca = require("../db/models/Marca.model"); */
 const DetalleCarrito = require ("../db/models/DetalleCarrito.model");
-const Productos = require("../db/models/producto.model");
+const Productos = require("../db/models/productos_Better.model");
 
 
 
