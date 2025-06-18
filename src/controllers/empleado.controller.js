@@ -5,11 +5,11 @@ const jwt = require("jsonwebtoken");
 // Controlador para obtener todos los clientes
 async function getAllEmpleado(req, res) {
   try {
-    const empleado = await Empleado.findAll();
-    res.json(empleado);
+    const empleados = await Empleado.findAll();
+    res.json(empleados);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al obtener los empleado" });
+    res.status(500).json({ message: "Error al obtener los empleados" });
   }
 }
 
@@ -20,13 +20,16 @@ async function createEmpleado(req, res) {
     vchAMaterno,
     vchCorreo,
     dtFechaNacimiento,
+    vchLugarNacimiento,
     vchTelefono,
     chrSexo,
     EstadoEmp,
+    TipoEmp,
     vchPassword,
     vchPreguntaSecreta,
-    vchRespuestaSecreta, 
+    vchRespuestaSecreta,
   } = req.body;
+
   try {
     const hashedPassword = await bcrypt.hash(vchPassword, 10);
 
@@ -36,14 +39,16 @@ async function createEmpleado(req, res) {
       vchAMaterno,
       vchCorreo,
       dtFechaNacimiento,
+      vchLugarNacimiento,
       vchTelefono,
       chrSexo,
       EstadoEmp,
+      TipoEmp,
       vchPassword: hashedPassword,
       vchPreguntaSecreta,
-      vchRespuestaSecreta, 
-
+      vchRespuestaSecreta,
     });
+
     res.status(201).json(nuevoEmpleado);
   } catch (error) {
     console.error(error);
@@ -53,12 +58,19 @@ async function createEmpleado(req, res) {
 
 async function loginEmpleado(req, res) {
   const { vchCorreo, vchPassword } = req.body;
+
   try {
-    // Buscar al cliente por correo electrónico en la base de datos
     const empleado = await Empleado.findOne({ where: { vchCorreo } });
 
     if (!empleado) {
       return res.status(404).json({ message: "Empleado no encontrado" });
+    }
+
+    // Verificar que el empleado esté aceptado
+    if (empleado.EstadoEmp !== "Aceptado") {
+      return res
+        .status(403)
+        .json({ message: "Acceso denegado. Tu cuenta no está autorizada para iniciar sesión en este momento." });
     }
 
     const validPassword = await bcrypt.compare(
@@ -69,21 +81,19 @@ async function loginEmpleado(req, res) {
     if (!validPassword) {
       return res.status(401).json({ message: "Contraseña incorrecta" });
     }
-    // Generar un token de autenticación
+
     const token = jwt.sign(
       {
         empleadoId: empleado.intClvEmpleado,
         nombre: empleado.vchNombre,
         apellidoPaterno: empleado.vchAPaterno,
         apellidoMaterno: empleado.vchAMaterno,
-        userType: "empleado", // Agregar el userType aquí xd
+        userType: "empleado",
       },
       "secreto",
       { expiresIn: "1h" }
     );
-    console.log(token);
 
-    // Enviar el token como respuesta
     res.json({ token });
   } catch (error) {
     console.error(error);
@@ -99,29 +109,36 @@ async function updateEmpleado(req, res) {
     vchAMaterno,
     vchCorreo,
     dtFechaNacimiento,
+    vchLugarNacimiento,
     vchTelefono,
     chrSexo,
     EstadoEmp,
+    TipoEmp,
     vchPreguntaSecreta,
     vchRespuestaSecreta,
   } = req.body;
 
   try {
     const empleado = await Empleado.findByPk(id);
+
     if (!empleado) {
       return res.status(404).json({ message: "Empleado no encontrado" });
     }
 
-    empleado.vchNombre = vchNombre;
-    empleado.vchAPaterno = vchAPaterno;
-    empleado.vchAMaterno = vchAMaterno;
-    empleado.vchCorreo = vchCorreo;
-    empleado.dtFechaNacimiento = dtFechaNacimiento;
-    empleado.vchTelefono = vchTelefono;
-    empleado.chrSexo = chrSexo;
-    empleado.EstadoEmp = EstadoEmp;
-    empleado.vchPreguntaSecreta = vchPreguntaSecreta;
-    empleado.vchRespuestaSecreta = vchRespuestaSecreta;
+    empleado.set({
+      vchNombre,
+      vchAPaterno,
+      vchAMaterno,
+      vchCorreo,
+      dtFechaNacimiento,
+      vchLugarNacimiento,
+      vchTelefono,
+      chrSexo,
+      EstadoEmp,
+      TipoEmp,
+      vchPreguntaSecreta,
+      vchRespuestaSecreta,
+    });
 
     await empleado.save();
 
@@ -134,37 +151,41 @@ async function updateEmpleado(req, res) {
 
 async function getEmpleadoById(req, res) {
   const { id } = req.params;
+
   try {
     const empleado = await Empleado.findOne({ where: { intClvEmpleado: id } });
+
     if (!empleado) {
       return res.status(404).json({ message: "Empleado no encontrado" });
     }
+
     res.json(empleado);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener el empleado" });
   }
 }
+
 async function deactivateEmpleado(req, res) {
-  const { id } = req.params; // Obtener el ID del empleado desde los parámetros de la solicitud
+  const { id } = req.params;
+
   try {
-    // Actualizar el estado del empleado a "No Disponible"
     const [updated] = await Empleado.update(
-      { EstadoEmp: 'NO DISPONIBLE' },
+      { EstadoEmp: "Desactivado" },
       { where: { intClvEmpleado: id } }
     );
 
-    // Verificar si la actualización fue exitosa
     if (updated) {
-      res.status(200).json({ message: 'Empleado dado de baja con éxito' });
+      res.status(200).json({ message: "Empleado dado de baja con éxito" });
     } else {
-      res.status(404).json({ message: 'Empleado no encontrado' });
+      res.status(404).json({ message: "Empleado no encontrado" });
     }
   } catch (error) {
-    console.error('Error al dar de baja al empleado:', error);
-    res.status(500).json({ message: 'Error al dar de baja al empleado' });
+    console.error("Error al dar de baja al empleado:", error);
+    res.status(500).json({ message: "Error al dar de baja al empleado" });
   }
 }
+
 module.exports = {
   getEmpleadoById,
   deactivateEmpleado,
