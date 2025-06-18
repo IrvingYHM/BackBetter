@@ -1,4 +1,4 @@
-const UneteEquipo = require("../models/UneteEquipo.model");
+const UneteEquipo = require("../db/models/UneteEquipo.model");
 const { uploader } = require("../libs/cloudinary");
 const fs = require("fs-extra");
 
