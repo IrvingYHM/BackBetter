@@ -48,8 +48,6 @@ const paymentRoutes = require("./routes/PagoRoutes.rutes");
 
 const direc_ClientRouter = require("./routes/Direc_Client.routes");
 
-app.use(fileUpload({ useTempFiles: true }));
-
 dotenv.config();
 const app = express();
 
