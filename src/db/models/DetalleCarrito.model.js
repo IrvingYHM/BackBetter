@@ -1,7 +1,7 @@
 // db/models/detallecarrito.model.js
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../../libs/sequelize');
-const Productos = require ('./producto.model')
+const Productos = require ('./productos_Better.model')
 const Carrito = require ('./Carrito.model')
 
 
