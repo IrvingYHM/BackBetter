@@ -1,13 +1,10 @@
 const PedidoDetalle = require("../../db/models/Pedido/DetallePedido.model");
 
-const Productos = require("../../db/models/producto.model");
-const Graduacion = require("../../db/models/Graduacion.model")
-const Tratamiento = require("../../db/models/Detalle_carrito/Tratamiento.model")
+const Productos = require("../../db/models/productos_Better.model");
 const Pedido = require("../../db/models/Pedido/Pedido.model")
 const Cliente = require("../../db/models/cliente.model")
 
 const Categoria = require('../../db/models/Categoria.model');
-const Marca = require('../../db/models/Marca.model');
 // Controlador para obtener todos los detalles de pedidos
 async function getAllDetallePedidos(req, res) {
   try {
@@ -21,19 +18,15 @@ async function getAllDetallePedidos(req, res) {
             'IdProducto', 
             'vchNombreProducto',
             'Existencias', 
-            'IdCategoria', 
-            'IdMarca', 
+            'IdCategoria',
             'Precio', 
             'PrecioOferta', 
             'EnOferta'
           ],
           include: [
             { model: Categoria, as: 'categoria', attributes: ['NombreCategoria'] },
-            { model: Marca, as: 'marca', attributes: ['NombreMarca'] }
           ]
         },
-        { model: Graduacion, as: "Graduacion", attributes: ['ValorGraduacion'] },
-        { model: Tratamiento, as: "Tratamiento", attributes: ['Nombre'] },
         { 
           model: Pedido, 
           as: "Pedido",
@@ -54,7 +47,6 @@ async function getAllDetallePedidos(req, res) {
       const producto = detalle.Producto || {};
       const pedido = detalle.Pedido || {};
       const categoria = producto.categoria || {};
-      const marca = producto.marca || {};
 
       return {
         IdProducto: producto.IdProducto,
@@ -62,7 +54,6 @@ async function getAllDetallePedidos(req, res) {
         NombreProducto: producto.vchNombreProducto,
         Existencias: producto.Existencias,
         Categoria: categoria.NombreCategoria || 'No disponible',
-        Marca: marca.NombreMarca || 'No disponible',
         Precio: producto.Precio,
         PrecioOferta: producto.PrecioOferta,
         TotalVentas: detalle.Cantidad,
@@ -86,8 +77,6 @@ async function getAllDetallePedidos(req, res) {
 async function CrearDetallePedido(req, res) {
   const {
     IdProducto,
-    IdGraduacion,
-    IdTratamiento,
     Precio,
     Descripcion,
     SubTotal,
@@ -97,8 +86,6 @@ async function CrearDetallePedido(req, res) {
   try {
     const nuevoDetallePedido = await PedidoDetalle.create({
       IdProducto,
-      IdGraduacion,
-      IdTratamiento,
       Precio,
       Descripcion,
       SubTotal,
