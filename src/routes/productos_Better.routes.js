@@ -30,7 +30,7 @@ router.post("/suscripcion", authControllerProductos.agregarSuscripcion);
 
 
 router.post("/Crear_productos", authControllerProductos.createProductos);
-/* router.post('/Crear_productos', upload.single('imagen'), authControllerProductos.createProductos) */
+router.put("/Actualizar_producto/:id", authControllerProductos.updateProducto); 
 
 router.get("/Buscar_productos", authControllerProductos.BuscarProducto);
 router.get('/filtro_producto', authControllerProductos.BuscarProductoPorCategoria);
@@ -44,7 +44,6 @@ router.get('/find/:nombre', authControllerProductos.BuscarProductoEnOfertaPorNom
 
 
 router.get("/Productos/:id", authControllerProductos.ProductoPorId); 
-router.put("/Productos/:id", authControllerProductos.updateProducto); 
 router.delete("/Productos/:id", authControllerProductos.deleteProducto);
 router.put('/desactivar/:id', authControllerProductos.desactivarProducto);
 /* router.get('/filtro_Marca', authControllerProductos.BuscarProductoPorMarca); */
