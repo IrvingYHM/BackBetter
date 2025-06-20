@@ -18,6 +18,13 @@ async function ensureDatabaseExists() {
   await connection.end();
 }
 
+console.log({
+  host: process.env.MYSQLHOST,
+  port: process.env.MYSQLPORT,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+});
+
 // Conexión Sequelize
 const sequelize = new Sequelize(process.env.MYSQL_URL, {
   dialect: "mysql",
@@ -31,7 +38,7 @@ setupModels(sequelize);
 
 (async () => {
   try {
-    await ensureDatabaseExists(); // ✅ Aquí llamas la función antes de conectar
+    await ensureDatabaseExists(); // Aquí llamas la función antes de conectar
     await sequelize.authenticate();
     console.log("Conexión establecida correctamente");
     await sequelize.sync();
