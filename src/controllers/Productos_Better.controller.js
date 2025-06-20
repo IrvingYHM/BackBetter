@@ -29,6 +29,19 @@ async function getProductos(req, res) {
   }
 }
 
+async function getProductosAll(req, res) {
+  try {
+    const productos = await Productos_Better.findAll({
+      include: [
+        { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
+      ],
+    });
+    res.json(productos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los productos" });
+  }
+}
 
 //Ver Ofertas
 async function getProductosOfertas(req, res) {
@@ -448,6 +461,7 @@ async function BuscarProductoPorNombres  (req, res) {
 
 module.exports = {
   getProductos,
+  getProductosAll,
   getProductosOfertas,
   desactivarProducto,
   createProductos,
@@ -460,5 +474,5 @@ module.exports = {
   updateProductosExistencias,
   BuscarProductoEnOfertaPorNombre,
   BuscarProductoPorNombres,
-  agregarSuscripcion
+  agregarSuscripcion,
 };
