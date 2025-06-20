@@ -1,6 +1,7 @@
 const Productos_Better = require("../db/models/productos_Better.model");
 const { Op } = require("sequelize");
 const Categoria = require("../db/models/Categoria.model");
+const Empleado = require("../db/models/CrearEmpleado.model");
 // Importa webpush si aún no está importado
 const webpush = require('../services/webPush'); // Ajusta la ruta si es necesario
 const  Suscripcion  = require('../db/models/suscripciones.model'); // Asegúrate de que la importación sea correcta
@@ -34,6 +35,11 @@ async function getProductosAll(req, res) {
     const productos = await Productos_Better.findAll({
       include: [
         { model: Categoria, as: "categoria", attributes: ["NombreCategoria"] },
+        {
+          model: Empleado,
+          as: "empleado",
+          attributes: ["vchNombre", "vchAPaterno", "vchAMaterno"],
+        },
       ],
     });
     res.json(productos);
