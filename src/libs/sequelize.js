@@ -1,14 +1,24 @@
+import mysql from "mysql2/promise";
 const { Sequelize } = require("sequelize");
 const { config } = require("../config/config");
 const setupModels = require("../db/models");
 
-/* const sequelize = new Sequelize(process.env.MYSQL_URL, {
-  dialect: "mysql",
-  define: {
-    timestamps: false // Si la tabla no tiene campos de timestamp, puedes omitir esta 
-  }
-}); */
+// Crea la base de datos si no existe
+async function ensureDatabaseExists() {
+  const connection = await mysql.createConnection({
+    host: process.env.MYSQLHOST,
+    port: process.env.MYSQLPORT,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+  });
 
+  await connection.query(
+    `CREATE DATABASE IF NOT EXISTS \`${process.env.MYSQLDATABASE}\`;`
+  );
+  await connection.end();
+}
+
+// Conexión Sequelize
 const sequelize = new Sequelize(process.env.MYSQL_URL, {
   dialect: "mysql",
   define: {
@@ -21,6 +31,7 @@ setupModels(sequelize);
 
 (async () => {
   try {
+    await ensureDatabaseExists(); // ✅ Aquí llamas la función antes de conectar
     await sequelize.authenticate();
     console.log("Conexión establecida correctamente");
     await sequelize.sync();
