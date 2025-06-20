@@ -88,8 +88,6 @@ app.use(
   })
 );
 
-console.log("Iniciando aplicación...");
-
 /* const Productos = require('./db/models/producto.model'); */
 /* const Cliente = require('./db/models/cliente.model');
 const Carritos = require('./db/models/Carrito.model');
