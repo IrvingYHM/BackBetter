@@ -21,6 +21,7 @@ const storage = multer.diskStorage({
 
 // Ruta para iniciar sesión
 router.get('/Productos', authControllerProductos.getProductos); // Utilizar el método login del controlador de autenticación
+router.get('/ProductosAll', authControllerProductos.getProductosAll); //Todos los productos
 router.get('/ProductosOfertas', authControllerProductos.getProductosOfertas); // Utilizar el método login del controlador de autenticación
 
 
