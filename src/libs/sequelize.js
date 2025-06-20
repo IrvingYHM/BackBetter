@@ -1,28 +1,31 @@
+require("dotenv").config();
 const mysql = require("mysql2/promise");
 const { Sequelize } = require("sequelize");
-const { config } = require("../config/config");
+/* const { config } = require("../config/config"); */
 const setupModels = require("../db/models");
 
 // Crea la base de datos si no existe
 async function ensureDatabaseExists() {
   const connection = await mysql.createConnection({
-    host: process.env.MYSQLHOST,
-    port: process.env.MYSQLPORT,
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
   });
 
   await connection.query(
-    `CREATE DATABASE IF NOT EXISTS \`${process.env.MYSQLDATABASE}\`;`
+    `CREATE DATABASE IF NOT EXISTS \`${process.env.DB_NAME}\`;`
   );
   await connection.end();
 }
 
+console.log("Conectando a la BD con:");
 console.log({
-  host: process.env.MYSQLHOST,
-  port: process.env.MYSQLPORT,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 // Conexión Sequelize
