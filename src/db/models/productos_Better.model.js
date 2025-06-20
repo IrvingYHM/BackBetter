@@ -34,7 +34,7 @@ Productos_Better.init(
       allowNull: false,
     },
     Existencias: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     IdCategoria: {
