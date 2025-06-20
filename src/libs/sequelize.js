@@ -48,8 +48,4 @@ setupModels(sequelize);
   }
 })();
 
-app.listen(port, () => {
-  console.log("App corriendo en puerto", port);
-});
-
 module.exports = sequelize;
