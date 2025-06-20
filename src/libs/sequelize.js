@@ -3,8 +3,6 @@ const { Sequelize } = require("sequelize");
 const { config } = require("../config/config");
 const setupModels = require("../db/models");
 
-console.log("Iniciando aplicación...");
-
 // Crea la base de datos si no existe
 async function ensureDatabaseExists() {
   const connection = await mysql.createConnection({
@@ -49,5 +47,9 @@ setupModels(sequelize);
     console.error("Error al conectar con la base de datos:", error);
   }
 })();
+
+app.listen(port, () => {
+  console.log("App corriendo en puerto", port);
+});
 
 module.exports = sequelize;

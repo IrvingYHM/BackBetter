@@ -88,9 +88,7 @@ app.use(
   })
 );
 
-app.listen(port, () => {
-  console.log("App corriendo en puerto", port);
-});
+console.log("Iniciando aplicación...");
 
 /* const Productos = require('./db/models/producto.model'); */
 /* const Cliente = require('./db/models/cliente.model');
