@@ -15,7 +15,7 @@ Productos_Better.init(
     },
     IdEmpleado: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: Empleado, // Asegúrate de que 'Empleado' esté importado correctamente
         key: "intClvEmpleado",

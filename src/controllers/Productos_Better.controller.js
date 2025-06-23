@@ -351,15 +351,15 @@ const updateProducto = async (req, res) => {
     }
 
     // Asignaciones con validación de null/undefined (permitimos falsy como 0, false, "")
-    if (vchNombreProducto !== undefined)
+    if (vchNombreProducto)
       producto.vchNombreProducto = vchNombreProducto;
-    if (vchDescripcion !== undefined) producto.vchDescripcion = vchDescripcion;
-    if (Precio !== undefined) producto.Precio = Precio;
+    if (vchDescripcion) producto.vchDescripcion = vchDescripcion;
+    if (Precio) producto.Precio = Precio;
     if (Existencias !== undefined) producto.Existencias = Existencias;
-    if (IdCategoria !== undefined) producto.IdCategoria = IdCategoria;
-    if (vchNomImagen !== undefined) producto.vchNomImagen = vchNomImagen;
+    if (IdCategoria) producto.IdCategoria = IdCategoria;
+    if (vchNomImagen) producto.vchNomImagen = vchNomImagen;
     if (EnOferta !== undefined) producto.EnOferta = EnOferta;
-    if (PrecioOferta !== undefined) producto.PrecioOferta = PrecioOferta;
+    if (PrecioOferta) producto.PrecioOferta = PrecioOferta;
 
     await producto.save();
 
