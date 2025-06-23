@@ -330,12 +330,19 @@ const ProductoPorId = async (req, res) => {
   }
 };
 
-
-
 const updateProducto = async (req, res) => {
   try {
     const { id } = req.params;
-    const { vchNombreProducto, vchDescripcion, Precio, Existencias, IdCategoria, vchNomImagen } = req.body;
+    const {
+      vchNombreProducto,
+      vchDescripcion,
+      Precio,
+      Existencias,
+      IdCategoria,
+      vchNomImagen,
+      EnOferta,
+      PrecioOferta,
+    } = req.body;
 
     const producto = await Productos_Better.findByPk(id);
 
@@ -343,12 +350,16 @@ const updateProducto = async (req, res) => {
       return res.status(404).json({ message: "Producto no encontrado" });
     }
 
-    producto.vchNombreProducto = vchNombreProducto || producto.vchNombreProducto;
-    producto.vchDescripcion = vchDescripcion || producto.vchDescripcion;
-    producto.Precio = Precio || producto.Precio;
-    producto.Existencias = Existencias || producto.Existencias;
-    producto.IdCategoria = IdCategoria || producto.IdCategoria;
-    producto.vchNomImagen = vchNomImagen || producto.vchNomImagen;
+    // Asignaciones con validación de null/undefined (permitimos falsy como 0, false, "")
+    if (vchNombreProducto !== undefined)
+      producto.vchNombreProducto = vchNombreProducto;
+    if (vchDescripcion !== undefined) producto.vchDescripcion = vchDescripcion;
+    if (Precio !== undefined) producto.Precio = Precio;
+    if (Existencias !== undefined) producto.Existencias = Existencias;
+    if (IdCategoria !== undefined) producto.IdCategoria = IdCategoria;
+    if (vchNomImagen !== undefined) producto.vchNomImagen = vchNomImagen;
+    if (EnOferta !== undefined) producto.EnOferta = EnOferta;
+    if (PrecioOferta !== undefined) producto.PrecioOferta = PrecioOferta;
 
     await producto.save();
 
