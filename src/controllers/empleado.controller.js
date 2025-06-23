@@ -88,7 +88,7 @@ async function loginEmpleado(req, res) {
         nombre: empleado.vchNombre,
         apellidoPaterno: empleado.vchAPaterno,
         apellidoMaterno: empleado.vchAMaterno,
-        userType: "empleado",
+        userType: empleado.TipoEmp,
       },
       "secreto",
       { expiresIn: "1h" }
