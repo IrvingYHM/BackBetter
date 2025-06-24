@@ -99,6 +99,7 @@ async function desactivarProducto(req, res) {
       Precio,
       EnOferta,
       PrecioOferta,
+      IdEmpleado,
     } = req.body;
 
     // Validación de longitud de la descripción
@@ -130,6 +131,7 @@ async function desactivarProducto(req, res) {
         Precio,
         EnOferta,
         PrecioOferta,
+        IdEmpleado,
       });
 
       // Obtener suscripciones activas
