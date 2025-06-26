@@ -1,5 +1,9 @@
 const Catalogos = require("../db/models/catalogos.model"); // Ajusta la ruta si es diferente
-const cloudinary = require("../services/cloudinari"); // Asegúrate de tener este servicio configurado
+const { uploadPDFToDrive, deleteFile } = require("../services/googleDrive");
+const fs = require("fs");
+
+// ID de la carpeta de Google Drive donde se subirán los catálogos
+const FOLDER_ID = '1jPEg73smmQcsM9aMdf0HHnryK7flwlIe';
 
 const getCatalogos = async (req, res) => {
   try {
@@ -23,23 +27,23 @@ const createCatalogo = async (req, res) => {
 
     const file = req.files.catalogo;
 
-    // Validar que sea un archivo PDF
     if (file.mimetype !== "application/pdf") {
       return res
         .status(400)
         .json({ message: "Solo se permiten archivos PDF." });
     }
 
-    // Subir el PDF a Cloudinary
-    const result = await cloudinary.uploader.upload(file.tempFilePath, {
-      folder: "Catalogos",
-      resource_type: "raw", // Importante para subir archivos no imagen
-    });
+    const tempPath = file.tempFilePath || `./uploads/${file.name}`;
+    await file.mv(tempPath);
 
-    // Crear registro en la base de datos
+    const uploadResult = await uploadPDFToDrive(tempPath, file.name, FOLDER_ID);
+
+    fs.unlinkSync(tempPath); // elimina archivo temporal
+
     const nuevoCatalogo = await Catalogos.create({
       vchNombreCatalogo,
-      vchCatalogo: result.secure_url,
+      vchCatalogo: uploadResult.webViewLink,
+      fileId: uploadResult.fileId,
     });
 
     res.status(201).json({
@@ -50,14 +54,6 @@ const createCatalogo = async (req, res) => {
     console.error("Error al crear el catálogo:", error);
     res.status(500).json({ message: "Error interno al crear el catálogo." });
   }
-};
-
-const extractPublicId = (url) => {
-  // Ejemplo: https://res.cloudinary.com/demo/raw/upload/v1717887654/Catalogos/catalogo1.pdf
-  const parts = url.split("/");
-  const fileName = parts.pop().split(".")[0]; // "catalogo1"
-  const folder = parts.slice(parts.indexOf("upload") + 1).join("/"); // "Catalogos"
-  return `${folder}/${fileName}`; // "Catalogos/catalogo1"
 };
 
 const updateCatalogo = async (req, res) => {
@@ -72,6 +68,7 @@ const updateCatalogo = async (req, res) => {
     }
 
     let nuevaUrl = catalogo.vchCatalogo;
+    let nuevoFileId = catalogo.fileId;
 
     if (req.files && req.files.catalogo) {
       const file = req.files.catalogo;
@@ -82,22 +79,30 @@ const updateCatalogo = async (req, res) => {
           .json({ message: "Solo se permiten archivos PDF." });
       }
 
-      // Eliminar archivo anterior de Cloudinary
-      const publicId = extractPublicId(catalogo.vchCatalogo);
-      await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
+      const tempPath = file.tempFilePath || `./uploads/${file.name}`;
+      await file.mv(tempPath);
 
-      // Subir nuevo archivo
-      const result = await cloudinary.uploader.upload(file.tempFilePath, {
-        folder: "Catalogos",
-        resource_type: "raw",
-      });
+      // Eliminar el archivo anterior de Google Drive
+      if (catalogo.fileId) {
+        await deleteFile(catalogo.fileId);
+      }
 
-      nuevaUrl = result.secure_url;
+      const uploadResult = await uploadPDFToDrive(
+        tempPath,
+        file.name,
+        FOLDER_ID
+      );
+
+      fs.unlinkSync(tempPath);
+
+      nuevaUrl = uploadResult.webViewLink;
+      nuevoFileId = uploadResult.fileId;
     }
 
     catalogo.vchNombreCatalogo =
       vchNombreCatalogo || catalogo.vchNombreCatalogo;
     catalogo.vchCatalogo = nuevaUrl;
+    catalogo.fileId = nuevoFileId;
 
     await catalogo.save();
 
@@ -121,9 +126,9 @@ const deleteCatalogo = async (req, res) => {
       return res.status(404).json({ message: "Catálogo no encontrado" });
     }
 
-    // Eliminar archivo del Cloudinary
-    const publicId = extractPublicId(catalogo.vchCatalogo);
-    await cloudinary.uploader.destroy(publicId, { resource_type: "raw" });
+    if (catalogo.fileId) {
+      await deleteFile(catalogo.fileId);
+    }
 
     await catalogo.destroy();
 

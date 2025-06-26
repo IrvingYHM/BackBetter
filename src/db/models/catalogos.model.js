@@ -19,6 +19,10 @@ Catalogos.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    fileId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
   },
 
   {
