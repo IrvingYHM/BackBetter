@@ -1,15 +1,14 @@
 // services/googleDrive.js
 const { google } = require("googleapis");
 const fs = require("fs");
-const path = require("path");
 const mime = require("mime-types");
 
-const SCOPES = ["https://www.googleapis.com/auth/drive"];
-const KEYFILEPATH = path.join(__dirname, "../credentials-betterware-huejutla.json"); // Asegúrate de ajustar el path si es diferente
+// Leer credenciales desde variable de entorno
+const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: KEYFILEPATH,
-  scopes: SCOPES,
+  credentials: serviceAccount,
+  scopes: ["https://www.googleapis.com/auth/drive"],
 });
 
 const driveService = google.drive({ version: "v3", auth });
