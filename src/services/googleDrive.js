@@ -1,25 +1,21 @@
 // services/googleDrive.js
 const { google } = require("googleapis");
 const fs = require("fs");
-const path = require("path");
 const mime = require("mime-types");
 
-// Leer credenciales desde variable de entorno
-const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+// Leer y preparar la clave desde variable de entorno
+const parsedKey = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+parsedKey.private_key = parsedKey.private_key.replace(/\\n/g, "\n");
 
+// Crear autenticador de Google
 const auth = new google.auth.GoogleAuth({
-  credentials: {
-    ...JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY),
-    private_key: JSON.parse(
-      process.env.GOOGLE_SERVICE_ACCOUNT_KEY
-    ).private_key.replace(/\\n/g, "\n"),
-  },
+  credentials: parsedKey,
   scopes: ["https://www.googleapis.com/auth/drive"],
 });
 
 const driveService = google.drive({ version: "v3", auth });
 
-// Sube un archivo PDF a Google Drive y devuelve el ID del archivo y su URL
+// Función para subir PDF
 async function uploadPDFToDrive(filePath, fileName, folderId) {
   const fileMetadata = {
     name: fileName,
@@ -43,10 +39,9 @@ async function uploadPDFToDrive(filePath, fileName, folderId) {
   };
 }
 
+// Función para eliminar archivo
 async function deleteFile(fileId) {
-  await driveService.files.delete({
-    fileId: fileId,
-  });
+  await driveService.files.delete({ fileId });
 }
 
 module.exports = {

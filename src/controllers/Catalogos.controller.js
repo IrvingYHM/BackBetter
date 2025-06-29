@@ -79,7 +79,7 @@ const updateCatalogo = async (req, res) => {
           .json({ message: "Solo se permiten archivos PDF." });
       }
 
-      const tempPath = file.tempFilePath || `./uploads/${file.name}`;
+      const tempPath = path.join(__dirname, "../../uploads", file.name);
       await file.mv(tempPath);
 
       // Eliminar el archivo anterior de Google Drive
