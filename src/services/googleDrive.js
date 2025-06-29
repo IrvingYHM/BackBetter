@@ -8,7 +8,12 @@ const mime = require("mime-types");
 const serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
 
 const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, "../credentials.json"),
+  credentials: {
+    ...JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY),
+    private_key: JSON.parse(
+      process.env.GOOGLE_SERVICE_ACCOUNT_KEY
+    ).private_key.replace(/\\n/g, "\n"),
+  },
   scopes: ["https://www.googleapis.com/auth/drive"],
 });
 
