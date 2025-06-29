@@ -13,23 +13,28 @@ const auth = new google.auth.GoogleAuth({
   scopes: ["https://www.googleapis.com/auth/drive"],
 });
 
-const driveService = google.drive({ version: "v3", auth });
+// Obtener el cliente autenticado
+let driveServicePromise = auth
+  .getClient()
+  .then((authClient) => google.drive({ version: "v3", auth: authClient }));
 
-// Función para subir PDF
+// Subir PDF a Google Drive
 async function uploadPDFToDrive(filePath, fileName, folderId) {
+  const drive = await driveServicePromise;
+
   const fileMetadata = {
     name: fileName,
     parents: [folderId],
   };
 
   const media = {
-    mimeType: mime.lookup(filePath),
+    mimeType: mime.lookup(filePath) || "application/pdf",
     body: fs.createReadStream(filePath),
   };
 
-  const response = await driveService.files.create({
+  const response = await drive.files.create({
     resource: fileMetadata,
-    media: media,
+    media,
     fields: "id, webViewLink",
   });
 
@@ -39,9 +44,10 @@ async function uploadPDFToDrive(filePath, fileName, folderId) {
   };
 }
 
-// Función para eliminar archivo
+// Eliminar archivo de Google Drive
 async function deleteFile(fileId) {
-  await driveService.files.delete({ fileId });
+  const drive = await driveServicePromise;
+  await drive.files.delete({ fileId });
 }
 
 module.exports = {
