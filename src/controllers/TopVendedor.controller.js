@@ -28,18 +28,29 @@ async function getTopVendedores(req, res) {
 async function createTopVendedor(req, res) {
   const { intClvEmpleado, mes, año, numVentas } = req.body;
   try {
+    const existente = await TopVendedor.findOne({
+      where: { intClvEmpleado, mes, año },
+    });
+
+    if (existente) {
+      return res.status(400).json({
+        message: "Este empleado ya está registrado para ese mes y año.",
+      });
+    }
+
     const nuevoRegistro = await TopVendedor.create({
       intClvEmpleado,
       mes,
       año,
       numVentas,
     });
+
     res.status(201).json(nuevoRegistro);
   } catch (error) {
     console.error("Error al crear registro:", error);
-    res
-      .status(500)
-      .json({ message: "Error al crear el registro de top vendedor" });
+    res.status(500).json({
+      message: "Error al crear el registro de top vendedor",
+    });
   }
 }
 
@@ -47,10 +58,27 @@ async function createTopVendedor(req, res) {
 async function updateTopVendedor(req, res) {
   const { id } = req.params;
   const { intClvEmpleado, mes, año, numVentas } = req.body;
+
   try {
     const top = await TopVendedor.findByPk(id);
     if (!top)
       return res.status(404).json({ message: "Registro no encontrado" });
+
+    // Validar si ya existe otro registro con los mismos datos
+    const duplicado = await TopVendedor.findOne({
+      where: {
+        intClvEmpleado,
+        mes,
+        año,
+        idTopVendedor: { [require("sequelize").Op.ne]: id },
+      },
+    });
+
+    if (duplicado) {
+      return res.status(400).json({
+        message: "Ya existe otro registro con este empleado, mes y año.",
+      });
+    }
 
     top.intClvEmpleado = intClvEmpleado;
     top.mes = mes;
