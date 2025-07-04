@@ -34,7 +34,7 @@ async function createTopVendedor(req, res) {
 
     if (existente) {
       return res.status(400).json({
-        message: "Este empleado ya está registrado para ese mes y año.",
+        message: "Este empleado ya está registrado para este mes y año.",
       });
     }
 
