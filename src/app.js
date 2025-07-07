@@ -119,7 +119,6 @@ const DetalleCarritos = require('./db/models/DetalleCarrito.model');
   }); */
 
 const routerApi = require("./routes");
-const Imagenes = require("./db/models/Imagenes.model");
 // Rutas de cliente
 app.use("/clientes", clienteRouter);
 app.use("/direcciones-clientes", direc_ClientRouter);
