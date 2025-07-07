@@ -12,7 +12,7 @@ const Producto_Better = require("./routes/productos_Better.routes");
 const Catalogos = require("./routes/Catalogos.routes");
 const Categoria = require("./routes/Categoria.routes");
 const UneteEquipo = require("./routes/UneteEquipo.routes");
-const Slider = require("./routes/Slider.routes");
+const Imagenes = require("./routes/Imagenes.routes");
 const TopVendedor = require("./routes/TopVendedor.routes");
 const TopReferidos = require("./routes/TopReferidos.routes");
 const fileupload = require("express-fileupload");
@@ -119,6 +119,7 @@ const DetalleCarritos = require('./db/models/DetalleCarrito.model');
   }); */
 
 const routerApi = require("./routes");
+const Imagenes = require("./db/models/Imagenes.model");
 // Rutas de cliente
 app.use("/clientes", clienteRouter);
 app.use("/direcciones-clientes", direc_ClientRouter);
@@ -128,7 +129,7 @@ app.use("/productos_better", Producto_Better);
 app.use("/catalogos", Catalogos);
 app.use("/categoria", Categoria);
 app.use("/unete-equipo", UneteEquipo);
-app.use("/slider", Slider);
+app.use("/imagenes", Imagenes);
 app.use("/top-vendedor", TopVendedor);
 app.use("/top-referidos", TopReferidos);
 app.use("/DetalleCarrito", DetalleCarrito);
