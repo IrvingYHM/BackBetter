@@ -3,10 +3,10 @@ const Empleado = require("../db/models/CrearEmpleado.model");
 
 // Obtener el top 10 de vendedores por mes y año
 async function getTopVendedores(req, res) {
-  const { mes, año } = req.query;
+  const { month, year } = req.query;
   try {
     const top = await TopVendedor.findAll({
-      where: { mes, año },
+      where: { month, year },
       include: [
         {
           model: Empleado,
@@ -20,28 +20,28 @@ async function getTopVendedores(req, res) {
     res.json(top);
   } catch (error) {
     console.error("Error al obtener el top de vendedores:", error);
-    res.status(500).json({ message: "Error al obtener el top de vendedores" });
+    res.status(500).json({ monthsage: "Error al obtener el top de vendedores" });
   }
 }
 
 // Crear nuevo registro en top vendedores
 async function createTopVendedor(req, res) {
-  const { intClvEmpleado, mes, año, numVentas } = req.body;
+  const { intClvEmpleado, month, year, numVentas } = req.body;
   try {
     const existente = await TopVendedor.findOne({
-      where: { intClvEmpleado, mes, año },
+      where: { intClvEmpleado, month, year },
     });
 
     if (existente) {
       return res.status(400).json({
-        message: "Este empleado ya está registrado para este mes y año.",
+        monthsage: "Este empleado ya está registrado para este month y year.",
       });
     }
 
     const nuevoRegistro = await TopVendedor.create({
       intClvEmpleado,
-      mes,
-      año,
+      month,
+      year,
       numVentas,
     });
 
@@ -49,7 +49,7 @@ async function createTopVendedor(req, res) {
   } catch (error) {
     console.error("Error al crear registro:", error);
     res.status(500).json({
-      message: "Error al crear el registro de top vendedor",
+      monthsage: "Error al crear el registro de top vendedor",
     });
   }
 }
@@ -57,39 +57,39 @@ async function createTopVendedor(req, res) {
 // Actualizar registro (por ID)
 async function updateTopVendedor(req, res) {
   const { id } = req.params;
-  const { intClvEmpleado, mes, año, numVentas } = req.body;
+  const { intClvEmpleado, month, year, numVentas } = req.body;
 
   try {
     const top = await TopVendedor.findByPk(id);
     if (!top)
-      return res.status(404).json({ message: "Registro no encontrado" });
+      return res.status(404).json({ monthsage: "Registro no encontrado" });
 
     // Validar si ya existe otro registro con los mismos datos
     const duplicado = await TopVendedor.findOne({
       where: {
         intClvEmpleado,
-        mes,
-        año,
+        month,
+        year,
         idTopVendedor: { [require("sequelize").Op.ne]: id },
       },
     });
 
     if (duplicado) {
       return res.status(400).json({
-        message: "Ya existe otro registro con este empleado, mes y año.",
+        monthsage: "Ya existe otro registro con este empleado, month y year.",
       });
     }
 
     top.intClvEmpleado = intClvEmpleado;
-    top.mes = mes;
-    top.año = año;
+    top.month = month;
+    top.year = year;
     top.numVentas = numVentas;
 
     await top.save();
-    res.json({ message: "Registro actualizado con éxito" });
+    res.json({ monthsage: "Registro actualizado con éxito" });
   } catch (error) {
     console.error("Error al actualizar:", error);
-    res.status(500).json({ message: "Error al actualizar el registro" });
+    res.status(500).json({ monthsage: "Error al actualizar el registro" });
   }
 }
 
@@ -99,11 +99,11 @@ async function deleteTopVendedor(req, res) {
   try {
     const deleted = await TopVendedor.destroy({ where: { idTopVendedor: id } });
     if (!deleted)
-      return res.status(404).json({ message: "Registro no encontrado" });
-    res.json({ message: "Registro eliminado con éxito" });
+      return res.status(404).json({ monthsage: "Registro no encontrado" });
+    res.json({ monthsage: "Registro eliminado con éxito" });
   } catch (error) {
     console.error("Error al eliminar:", error);
-    res.status(500).json({ message: "Error al eliminar el registro" });
+    res.status(500).json({ monthsage: "Error al eliminar el registro" });
   }
 }
 
