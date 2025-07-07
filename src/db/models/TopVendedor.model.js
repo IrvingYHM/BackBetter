@@ -20,11 +20,11 @@ TopVendedor.init(
       },
       onDelete: "CASCADE",
     },
-    mes: {
+    month: {
       type: DataTypes.STRING(20),
       allowNull: false,
     },
-    año: {
+    year: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
