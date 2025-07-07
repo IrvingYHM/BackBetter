@@ -20,7 +20,7 @@ async function getTopReferidos(req, res) {
     res.json(top);
   } catch (error) {
     console.error("Error al obtener el top de Referidos:", error);
-    res.status(500).json({ monthsage: "Error al obtener el top de Referidos" });
+    res.status(500).json({ message: "Error al obtener el top de Referidos" });
   }
 }
 
@@ -39,7 +39,7 @@ async function createTopReferidos(req, res) {
     console.error("Error al crear registro:", error);
     res
       .status(500)
-      .json({ monthsage: "Error al crear el registro de top Referidos" });
+      .json({ message: "Error al crear el registro de top Referidos" });
   }
 }
 
@@ -50,7 +50,7 @@ async function updateTopReferidos(req, res) {
   try {
     const top = await TopReferidos.findByPk(id);
     if (!top)
-      return res.status(404).json({ monthsage: "Registro no encontrado" });
+      return res.status(404).json({ message: "Registro no encontrado" });
 
     top.intClvEmpleado = intClvEmpleado;
     top.month = month;
@@ -58,10 +58,10 @@ async function updateTopReferidos(req, res) {
     top.numReferidos = numReferidos;
 
     await top.save();
-    res.json({ monthsage: "Registro actualizado con éxito" });
+    res.json({ message: "Registro actualizado con éxito" });
   } catch (error) {
     console.error("Error al actualizar:", error);
-    res.status(500).json({ monthsage: "Error al actualizar el registro" });
+    res.status(500).json({ message: "Error al actualizar el registro" });
   }
 }
 
@@ -71,11 +71,11 @@ async function deleteTopReferidos(req, res) {
   try {
     const deleted = await TopReferidos.destroy({ where: { idTopReferidos: id } });
     if (!deleted)
-      return res.status(404).json({ monthsage: "Registro no encontrado" });
-    res.json({ monthsage: "Registro eliminado con éxito" });
+      return res.status(404).json({ message: "Registro no encontrado" });
+    res.json({ message: "Registro eliminado con éxito" });
   } catch (error) {
     console.error("Error al eliminar:", error);
-    res.status(500).json({ monthsage: "Error al eliminar el registro" });
+    res.status(500).json({ message: "Error al eliminar el registro" });
   }
 }
 
