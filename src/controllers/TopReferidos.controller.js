@@ -28,6 +28,18 @@ async function getTopReferidos(req, res) {
 async function createTopReferidos(req, res) {
   const { intClvEmpleado, month, year, numReferidos } = req.body;
   try {
+    const existe = await TopReferidos.findOne({
+      where: { intClvEmpleado, month, year },
+    });
+
+    if (existe) {
+      return res
+        .status(400)
+        .json({
+          message: "Este afiliado ya fue registrado para este mes y año.",
+        });
+    }
+
     const nuevoRegistro = await TopReferidos.create({
       intClvEmpleado,
       month,
@@ -52,6 +64,23 @@ async function updateTopReferidos(req, res) {
     if (!top)
       return res.status(404).json({ message: "Registro no encontrado" });
 
+    // Verificar si ya existe otro registro con el mismo empleado, mes y año
+    const duplicado = await TopReferidos.findOne({
+      where: {
+        intClvEmpleado,
+        month,
+        year,
+        idTopReferidos: { [require("sequelize").Op.ne]: id },
+      },
+    });
+
+    if (duplicado) {
+      return res.status(400).json({
+        message:
+          "Ya existe otro registro con este afiliado para este mes y año.",
+      });
+    }
+
     top.intClvEmpleado = intClvEmpleado;
     top.month = month;
     top.year = year;
@@ -69,7 +98,9 @@ async function updateTopReferidos(req, res) {
 async function deleteTopReferidos(req, res) {
   const { id } = req.params;
   try {
-    const deleted = await TopReferidos.destroy({ where: { idTopReferidos: id } });
+    const deleted = await TopReferidos.destroy({
+      where: { idTopReferidos: id },
+    });
     if (!deleted)
       return res.status(404).json({ message: "Registro no encontrado" });
     res.json({ message: "Registro eliminado con éxito" });
