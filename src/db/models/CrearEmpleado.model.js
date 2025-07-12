@@ -24,6 +24,10 @@ Empleado.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    vchCURP: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
     vchCorreo: {
       type: DataTypes.STRING(100),
       allowNull: false,
