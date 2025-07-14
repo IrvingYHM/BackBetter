@@ -170,31 +170,34 @@ async function getEmpleadoById(req, res) {
   }
 }
 
-async function deactivateEmpleado(req, res) {
+// Actualizar solo el Estado del empleado
+async function updateEstadoEmpleado(req, res) {
   const { id } = req.params;
+  const { EstadoEmp } = req.body;
 
   try {
-    const [updated] = await Empleado.update(
-      { EstadoEmp: "Desactivado" },
-      { where: { intClvEmpleado: id } }
-    );
+    const empleado = await Empleado.findByPk(id);
 
-    if (updated) {
-      res.status(200).json({ message: "Empleado dado de baja con éxito" });
-    } else {
-      res.status(404).json({ message: "Empleado no encontrado" });
+    if (!empleado) {
+      return res.status(404).json({ message: "Empleado no encontrado" });
     }
+
+    empleado.EstadoEmp = EstadoEmp;
+    await empleado.save();
+
+    res.json({ message: "Estado del empleado actualizado con éxito" });
   } catch (error) {
-    console.error("Error al dar de baja al empleado:", error);
-    res.status(500).json({ message: "Error al dar de baja al empleado" });
+    console.error("Error al actualizar estado:", error);
+    res.status(500).json({ message: "Error al actualizar el estado del empleado" });
   }
 }
 
+
 module.exports = {
   getEmpleadoById,
-  deactivateEmpleado,
   getAllEmpleado,
   updateEmpleado,
   createEmpleado,
   loginEmpleado,
+  updateEstadoEmpleado,
 };
