@@ -73,7 +73,7 @@ app.use((req, res, next) => {
 });
 const corsOptions = {
   origin: "*", // Permitir solicitudes desde cualquier origen
-  methods: ["GET", "POST", "DELETE", "PUT", "PATH"], // Permitir solo ciertos encabezados
+  methods: ["GET", "POST", "DELETE", "PUT", "PATCH"], // Permitir solo ciertos encabezados
 };
 
 //Primero los middlewares.
