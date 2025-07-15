@@ -51,30 +51,15 @@ const direc_ClientRouter = require("./routes/Direc_Client.routes");
 dotenv.config();
 const app = express();
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
-
 // Configurar opciones de CORS
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
 const corsOptions = {
-  origin: "*", // Permitir solicitudes desde cualquier origen
-  methods: ["GET", "POST", "DELETE", "PUT", "PATCH"], // Permitir solo ciertos encabezados
+  origin: "*",
+  methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 };
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 //Primero los middlewares.
 app.use(morgan("dev"));
@@ -87,36 +72,6 @@ app.use(
     tempFileDir: "./uploads",
   })
 );
-
-/* const Productos = require('./db/models/producto.model'); */
-/* const Cliente = require('./db/models/cliente.model');
-const Carritos = require('./db/models/Carrito.model');
-const DetalleCarritos = require('./db/models/DetalleCarrito.model');
- */
-
-// Eliminar la tabla de Productos
-/* Cliente.drop()
-  .then(() => {
-    console.log('Tabla de productos eliminada correctamente');
-  })
-  .catch((error) => {
-    console.error('Error al eliminar la tabla de productos:', error);
-  });
-
-  Carritos.drop()
-  .then(() => {
-    console.log('Tabla de productos eliminada correctamente');
-  })
-  .catch((error) => {
-    console.error('Error al eliminar la tabla de productos:', error);
-  });
-  DetalleCarritos.drop()
-  .then(() => {
-    console.log('Tabla de productos eliminada correctamente');
-  })
-  .catch((error) => {
-    console.error('Error al eliminar la tabla de productos:', error);
-  }); */
 
 const routerApi = require("./routes");
 // Rutas de cliente
