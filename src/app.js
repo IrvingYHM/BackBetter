@@ -55,7 +55,11 @@ const app = express();
 const corsOptions = {
   origin: "*",
   methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "ngrok-skip-browser-warning", // <--- AGREGA ESTA LINEA
+  ],
 };
 
 app.use(cors(corsOptions));
