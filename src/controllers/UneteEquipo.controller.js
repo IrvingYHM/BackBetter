@@ -5,7 +5,7 @@ const cloudinary = require('../services/cloudinari')
 
 const createUneteEquipo = async (req, res) => {
   try {
-    const { Titulo, Subtitulo, Beneficios, TextoBoton } = req.body;
+    const { Titulo, Subtitulo, Beneficios, TextoBoton, ColorTitulo, ColorSubtitulo } = req.body;
 
     let imageUrl = null;
     let publicId = null;
@@ -25,6 +25,8 @@ const createUneteEquipo = async (req, res) => {
       TextoBoton,
       Imagen: imageUrl,
       PublicId: publicId,
+      ColorTitulo: ColorTitulo || '#ffffff',
+      ColorSubtitulo: ColorSubtitulo || '#ffffff',
     });
 
     res.status(201).json(nuevo);
@@ -49,7 +51,7 @@ const updateUneteEquipo = async (req, res) => {
 
     if (!registro) return res.status(404).json({ message: "No encontrado" });
 
-    const { Titulo, Subtitulo, Beneficios, TextoBoton } = req.body;
+    const { Titulo, Subtitulo, Beneficios, TextoBoton, ColorTitulo, ColorSubtitulo } = req.body;
     let imageUrl = registro.Imagen;
     let publicId = registro.PublicId;
 
@@ -69,6 +71,8 @@ const updateUneteEquipo = async (req, res) => {
       TextoBoton,
       Imagen: imageUrl,
       PublicId: publicId,
+      ColorTitulo: ColorTitulo || registro.ColorTitulo,
+      ColorSubtitulo: ColorSubtitulo || registro.ColorSubtitulo,
     });
 
     res.json(registro);

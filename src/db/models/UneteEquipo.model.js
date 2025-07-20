@@ -34,6 +34,16 @@ UneteEquipo.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    ColorTitulo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: '#ffffff',
+    },
+    ColorSubtitulo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: '#ffffff',
+    },
   },
   {
     sequelize,
