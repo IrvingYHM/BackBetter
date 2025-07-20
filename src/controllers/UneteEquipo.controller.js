@@ -5,7 +5,14 @@ const cloudinary = require('../services/cloudinari')
 
 const createUneteEquipo = async (req, res) => {
   try {
-    const { Titulo, Subtitulo, Beneficios, TextoBoton, ColorTitulo, ColorSubtitulo } = req.body;
+    const {
+      Titulo,
+      Subtitulo,
+      Beneficios,
+      TextoBoton,
+      ColorTitulo,
+      ColorSubtitulo,
+    } = req.body;
 
     let imageUrl = null;
     let publicId = null;
@@ -18,15 +25,21 @@ const createUneteEquipo = async (req, res) => {
       await fs.unlink(file.tempFilePath);
     }
 
+    // 🔵 Solo un stringify si viene como array
+    let beneficiosFinal = Beneficios;
+    if (typeof Beneficios !== "string") {
+      beneficiosFinal = JSON.stringify(Beneficios);
+    }
+
     const nuevo = await UneteEquipo.create({
       Titulo,
       Subtitulo,
-      Beneficios: JSON.stringify(Beneficios),
+      Beneficios: beneficiosFinal,
       TextoBoton,
       Imagen: imageUrl,
       PublicId: publicId,
-      ColorTitulo: ColorTitulo || '#ffffff',
-      ColorSubtitulo: ColorSubtitulo || '#ffffff',
+      ColorTitulo: ColorTitulo || "#ffffff",
+      ColorSubtitulo: ColorSubtitulo || "#ffffff",
     });
 
     res.status(201).json(nuevo);
@@ -51,7 +64,14 @@ const updateUneteEquipo = async (req, res) => {
 
     if (!registro) return res.status(404).json({ message: "No encontrado" });
 
-    const { Titulo, Subtitulo, Beneficios, TextoBoton, ColorTitulo, ColorSubtitulo } = req.body;
+    const {
+      Titulo,
+      Subtitulo,
+      Beneficios,
+      TextoBoton,
+      ColorTitulo,
+      ColorSubtitulo,
+    } = req.body;
     let imageUrl = registro.Imagen;
     let publicId = registro.PublicId;
 
@@ -64,10 +84,16 @@ const updateUneteEquipo = async (req, res) => {
       await fs.unlink(file.tempFilePath);
     }
 
+    // 🔵 Solo un stringify si viene como array
+    let beneficiosFinal = Beneficios;
+    if (typeof Beneficios !== "string") {
+      beneficiosFinal = JSON.stringify(Beneficios);
+    }
+
     await registro.update({
       Titulo,
       Subtitulo,
-      Beneficios: JSON.stringify(Beneficios),
+      Beneficios: beneficiosFinal,
       TextoBoton,
       Imagen: imageUrl,
       PublicId: publicId,
