@@ -10,11 +10,12 @@ const createUneteEquipo = async (req, res) => {
     let imageUrl = null;
     let publicId = null;
 
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path);
+    if (req.files && req.files.Imagen) {
+      const file = req.files.Imagen;
+      const result = await cloudinary.uploader.upload(file.tempFilePath);
       imageUrl = result.secure_url;
       publicId = result.public_id;
-      await fs.unlink(req.file.path);
+      await fs.unlink(file.tempFilePath);
     }
 
     const nuevo = await UneteEquipo.create({
@@ -52,12 +53,13 @@ const updateUneteEquipo = async (req, res) => {
     let imageUrl = registro.Imagen;
     let publicId = registro.PublicId;
 
-    if (req.file) {
+    if (req.files && req.files.Imagen) {
       if (publicId) await cloudinary.uploader.destroy(publicId);
-      const result = await cloudinary.uploader.upload(req.file.path);
+      const file = req.files.Imagen;
+      const result = await cloudinary.uploader.upload(file.tempFilePath);
       imageUrl = result.secure_url;
       publicId = result.public_id;
-      await fs.unlink(req.file.path);
+      await fs.unlink(file.tempFilePath);
     }
 
     await registro.update({
