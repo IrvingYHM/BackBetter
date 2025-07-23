@@ -6,7 +6,9 @@ const DetalleCarritoController = require('../controllers/DetalleCarrito.controll
 // Ruta para obtener todos los clientes
 router.get('/', DetalleCarritoController.VerDetalleCarrito);
 router.post('/crear', DetalleCarritoController.createDetalleCarrito);
-router.delete('/eliminarCa', DetalleCarritoController.eliminarDetalleCarrito);
+router.delete('/eliminar/:idCarrito', DetalleCarritoController.eliminarDetalleCarrito);
+router.delete('/eliminar/producto/:idDetalle', DetalleCarritoController.eliminarDetalleCarrito);
+router.put('/modificarCantidad/:idDetalle', DetalleCarritoController.modificarCantidadProducto);
 
 
 

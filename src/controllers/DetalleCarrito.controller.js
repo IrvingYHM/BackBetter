@@ -88,14 +88,85 @@ async function VerDetalleCarrito(req, res) {
 
 
 async function eliminarDetalleCarrito(req, res) {
-  const { idCarrito } = req.params;
+  const { idCarrito, idDetalle } = req.params;
+  const { tipo } = req.query; // 'carrito' o 'producto'
 
   try {
-    await DetalleCarrito.destroy({ where: { IdCarrito: idCarrito } });
-    res.status(200).json({ message: "Detalle del carrito eliminado exitosamente" });
+    let condicion;
+    let mensaje;
+    
+    if (tipo === 'carrito' || idCarrito) {
+      condicion = { IdCarrito: idCarrito };
+      mensaje = "Todos los detalles del carrito eliminados exitosamente";
+    } else if (tipo === 'producto' || idDetalle) {
+      condicion = { IdDetalle_Carrito: idDetalle };
+      mensaje = "Producto eliminado del carrito exitosamente";
+    } else {
+      return res.status(400).json({ 
+        message: "Debe especificar idCarrito o idDetalle, o usar el parámetro tipo" 
+      });
+    }
+
+    const resultado = await DetalleCarrito.destroy({ where: condicion });
+    
+    if (resultado === 0) {
+      return res.status(404).json({ 
+        message: tipo === 'producto' ? "Producto no encontrado en el carrito" : "Carrito no encontrado" 
+      });
+    }
+    
+    res.status(200).json({ message: mensaje });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al eliminar el detalle del carrito" });
+    res.status(500).json({ message: "Error al eliminar del carrito" });
+  }
+}
+
+async function modificarCantidadProducto(req, res) {
+  const { idDetalle } = req.params;
+  const { accion } = req.body; // 'aumentar' o 'disminuir'
+
+  try {
+    const detalleCarrito = await DetalleCarrito.findByPk(idDetalle);
+    
+    if (!detalleCarrito) {
+      return res.status(404).json({ message: "Producto no encontrado en el carrito" });
+    }
+
+    let nuevaCantidad;
+    let mensaje;
+
+    if (accion === 'aumentar') {
+      nuevaCantidad = detalleCarrito.Cantidad + 1;
+      mensaje = "Cantidad aumentada exitosamente";
+    } else if (accion === 'disminuir') {
+      if (detalleCarrito.Cantidad <= 1) {
+        return res.status(400).json({ 
+          message: "No se puede disminuir más la cantidad. Use eliminar producto si desea quitarlo del carrito" 
+        });
+      }
+      nuevaCantidad = detalleCarrito.Cantidad - 1;
+      mensaje = "Cantidad disminuida exitosamente";
+    } else {
+      return res.status(400).json({ 
+        message: "Acción no válida. Use 'aumentar' o 'disminuir'" 
+      });
+    }
+
+    const nuevoSubTotal = nuevaCantidad * detalleCarrito.Precio;
+
+    await detalleCarrito.update({
+      Cantidad: nuevaCantidad,
+      SubTotal: nuevoSubTotal
+    });
+
+    res.status(200).json({
+      message: mensaje,
+      detalle: detalleCarrito
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al modificar la cantidad del producto" });
   }
 }
 
@@ -103,5 +174,6 @@ async function eliminarDetalleCarrito(req, res) {
 module.exports = {
     VerDetalleCarrito,
     createDetalleCarrito,
-    eliminarDetalleCarrito
+    eliminarDetalleCarrito,
+    modificarCantidadProducto
 };
