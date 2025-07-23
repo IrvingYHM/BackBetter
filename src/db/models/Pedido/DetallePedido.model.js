@@ -18,7 +18,7 @@ DetallePedido.init(
       comment: "Nombre del producto en el momento de la venta",
     },
     PrecioUnitario: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(10, 0),
       allowNull: false,
       comment: "Precio por unidad en el momento de la venta",
     },
@@ -27,7 +27,7 @@ DetallePedido.init(
       allowNull: false,
     },
     SubTotal: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(10, 0),
       allowNull: false,
       comment: "Cantidad * PrecioUnitario",
     },
