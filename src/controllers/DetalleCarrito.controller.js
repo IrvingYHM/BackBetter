@@ -58,6 +58,14 @@ async function VerDetalleCarrito(req, res) {
       Cantidad, 
       IdCarrito 
     } = req.body;
+
+    // Validación de longitud de la descripción
+    if (Descripcion && Descripcion.length > 1000) {
+      return res.status(400).json({
+        message: "La descripción es demasiado larga. Máximo 1000 caracteres.",
+      });
+    }
+
     try {
 
       // Crear el detalle de carrito utilizando el IdCarrito del carrito creado o existente

@@ -1,90 +1,50 @@
-const PedidoDetalle = require("../../db/models/Pedido/DetallePedido.model");
-
+const DetallePedido = require("../../db/models/Pedido/DetallePedido.model");
 const Productos = require("../../db/models/productos_Better.model");
-const Pedido = require("../../db/models/Pedido/Pedido.model")
-const Cliente = require("../../db/models/cliente.model")
-
-const Categoria = require('../../db/models/Categoria.model');
-// Controlador para obtener todos los detalles de pedidos
-async function getAllDetallePedidos(req, res) {
+async function VerDetallePedido(req, res) {
   try {
-    // Obtener los detalles de los pedidos con las relaciones necesarias
-    const pedidosDetalles = await PedidoDetalle.findAll({
+    const userId = req.query.userId; // Obtener el userId de la solicitud
+
+    const Pedido = await DetallePedido.findAll({
+      where: { IdCliente: userId }, // Filtrar por el userId
       include: [
-        { 
-          model: Productos, 
+        {
+          model: Productos,
           as: "Producto",
-          attributes: [
-            'IdProducto', 
-            'vchNombreProducto',
-            'Existencias', 
-            'IdCategoria',
-            'Precio', 
-            'PrecioOferta', 
-            'EnOferta'
-          ],
-          include: [
-            { model: Categoria, as: 'categoria', attributes: ['NombreCategoria'] },
-          ]
-        },
-        { 
-          model: Pedido, 
-          as: "Pedido",
-          attributes: [
-            'IdCliente',
-            'Fecha_Hora',
-            'TotalPe'
-          ]
-        },
+          attributes: ['IdProducto', 'vchNombreProducto', 'Precio', 'vchNomImagen', 'vchDescripcion']
+        }
       ],
     });
 
-    // Depurar la respuesta completa
-    console.log(JSON.stringify(pedidosDetalles, null, 2));
-
-    // Procesar los datos para obtener el formato deseado
-    const result = pedidosDetalles.map(detalle => {
-      const producto = detalle.Producto || {};
-      const pedido = detalle.Pedido || {};
-      const categoria = producto.categoria || {};
-
-      return {
-        IdProducto: producto.IdProducto,
-        IdCliente: pedido.IdCliente,
-        NombreProducto: producto.vchNombreProducto,
-        Existencias: producto.Existencias,
-        Categoria: categoria.NombreCategoria || 'No disponible',
-        Precio: producto.Precio,
-        PrecioOferta: producto.PrecioOferta,
-        TotalVentas: detalle.Cantidad,
-        IngresosTotales: detalle.SubTotal,    // Asumiendo que SubTotal es el ingreso total
-        FechaPedido: pedido.Fecha_Hora,
-        TotalPedido: pedido.TotalPe,
-        CantidadPedido: detalle.Cantidad,
-        EnOferta: producto.EnOferta
-      };
-    });
-
-    // Enviar los datos filtrados como respuesta
-    res.json(result);
+    res.json(Pedido);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al obtener los detalles pedidos" });
+    res.status(500).json({ message: "Error al obtener el detalle del pedido" });
   }
 }
 
 
-async function CrearDetallePedido(req, res) {
-  const {
+async function createDetallePedido(req, res) {
+  const 
+  { 
     IdProducto,
-    Precio,
-    Descripcion,
-    SubTotal,
-    Cantidad,
-    IdPedido,
+    Precio, 
+    Descripcion, 
+    SubTotal, 
+    Cantidad, 
+    IdPedido 
   } = req.body;
+
+  // Validación de longitud de la descripción
+  if (Descripcion && Descripcion.length > 1000) {
+    return res.status(400).json({
+      message: "La descripción es demasiado larga. Máximo 1000 caracteres.",
+    });
+  }
+
   try {
-    const nuevoDetallePedido = await PedidoDetalle.create({
+
+    // Crear el detalle de pedido utilizando el IdPedido del pedido creado o existente
+    const detallePedido = await DetallePedido.create({
       IdProducto,
       Precio,
       Descripcion,
@@ -92,14 +52,28 @@ async function CrearDetallePedido(req, res) {
       Cantidad,
       IdPedido,
     });
-    res.status(201).json(nuevoDetallePedido);
+
+    res.status(201).json(detallePedido);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error al crear el detalle del pedido" });
+    res.status(500).json({ message: "Error al crear el detalle de pedido" });
+  }
+}
+
+async function eliminarDetallePedido(req, res) {
+  const { idPedido } = req.params;
+
+  try {
+    await DetallePedido.destroy({ where: { IdPedido: idPedido } });
+    res.status(200).json({ message: "Detalle del pedido eliminado exitosamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al eliminar el detalle del pedido" });
   }
 }
 
 module.exports = {
-  getAllDetallePedidos,
-  CrearDetallePedido,
+    VerDetallePedido,
+    createDetallePedido,
+    eliminarDetallePedido
 };
