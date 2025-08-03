@@ -23,6 +23,10 @@ Catalogos.init(
       type: DataTypes.STRING(255),
       allowNull: true,
     },
+    imagenPortada: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
   },
 
   {

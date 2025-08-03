@@ -1,4 +1,5 @@
 const Catalogos = require("../db/models/catalogos.model");
+const cloudinary = require('../services/cloudinari');
 
 const getCatalogos = async (req, res) => {
   try {
@@ -18,9 +19,47 @@ const createCatalogo = async (req, res) => {
       return res.status(400).json({ message: "Nombre y URL del catálogo son requeridos." });
     }
 
+    // Validar que la URL sea válida
+    try {
+      new URL(vchCatalogo);
+    } catch (error) {
+      return res.status(400).json({ message: "La URL del catálogo no es válida." });
+    }
+
+    // Manejar imagen de portada (opcional)
+    let imagenPortadaUrl = null;
+    if (req.files && req.files.imagenPortada) {
+      const imagenFile = req.files.imagenPortada;
+      
+      // Validar que sea una imagen
+      if (!imagenFile.mimetype.startsWith('image/')) {
+        return res
+          .status(400)
+          .json({ message: "El archivo de portada debe ser una imagen." });
+      }
+
+      // Validar tamaño de imagen (máximo 5MB)
+      if (imagenFile.size > 5 * 1024 * 1024) {
+        return res
+          .status(400)
+          .json({ message: "La imagen de portada no debe superar los 5MB." });
+      }
+
+      // Subir imagen a Cloudinary
+      const result = await cloudinary.uploader.upload(imagenFile.tempFilePath, {
+        folder: "Catalogos",
+        transformation: [
+          { width: 800, height: 600, crop: "limit" },
+          { quality: "auto:good" }
+        ]
+      });
+      imagenPortadaUrl = result.url;
+    }
+
     const nuevoCatalogo = await Catalogos.create({
       vchNombreCatalogo,
       vchCatalogo,
+      imagenPortada: imagenPortadaUrl,
     });
 
     res.status(201).json({
@@ -44,8 +83,48 @@ const updateCatalogo = async (req, res) => {
       return res.status(404).json({ message: "Catálogo no encontrado" });
     }
 
+    // Validar URL si se proporciona una nueva
+    if (vchCatalogo) {
+      try {
+        new URL(vchCatalogo);
+      } catch (error) {
+        return res.status(400).json({ message: "La URL del catálogo no es válida." });
+      }
+    }
+
+    // Actualizar imagen de portada si se proporciona una nueva
+    let nuevaImagenPortada = catalogo.imagenPortada;
+    if (req.files && req.files.imagenPortada) {
+      const imagenFile = req.files.imagenPortada;
+      
+      // Validar que sea una imagen
+      if (!imagenFile.mimetype.startsWith('image/')) {
+        return res
+          .status(400)
+          .json({ message: "El archivo de portada debe ser una imagen." });
+      }
+
+      // Validar tamaño de imagen (máximo 5MB)
+      if (imagenFile.size > 5 * 1024 * 1024) {
+        return res
+          .status(400)
+          .json({ message: "La imagen de portada no debe superar los 5MB." });
+      }
+
+      // Subir nueva imagen a Cloudinary
+      const result = await cloudinary.uploader.upload(imagenFile.tempFilePath, {
+        folder: "Catalogos",
+        transformation: [
+          { width: 800, height: 600, crop: "limit" },
+          { quality: "auto:good" }
+        ]
+      });
+      nuevaImagenPortada = result.url;
+    }
+
     catalogo.vchNombreCatalogo = vchNombreCatalogo || catalogo.vchNombreCatalogo;
     catalogo.vchCatalogo = vchCatalogo || catalogo.vchCatalogo;
+    catalogo.imagenPortada = nuevaImagenPortada;
 
     await catalogo.save();
 
