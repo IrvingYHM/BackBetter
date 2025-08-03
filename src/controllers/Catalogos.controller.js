@@ -148,6 +148,22 @@ const deleteCatalogo = async (req, res) => {
       return res.status(404).json({ message: "Catálogo no encontrado" });
     }
 
+    // Eliminar imagen de portada de Cloudinary si existe
+    if (catalogo.imagenPortada) {
+      try {
+        // Extraer el public_id de la URL de Cloudinary
+        const urlParts = catalogo.imagenPortada.split('/');
+        const filename = urlParts[urlParts.length - 1];
+        const publicId = `Catalogos/${filename.split('.')[0]}`;
+        
+        // Eliminar imagen de Cloudinary
+        await cloudinary.uploader.destroy(publicId);
+      } catch (cloudinaryError) {
+        console.error("Error al eliminar imagen de Cloudinary:", cloudinaryError);
+        // Continuar con la eliminación del catálogo aunque falle la eliminación de la imagen
+      }
+    }
+
     await catalogo.destroy();
 
     res.json({ message: "Catálogo eliminado correctamente" });
