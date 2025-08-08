@@ -1,4 +1,5 @@
 const Categoria = require("../db/models/Categoria.model");
+const Productos_Better = require("../db/models/productos_Better.model");
 
 // Obtener todas las categorías
 const getCategorias = async (req, res) => {
@@ -68,6 +69,31 @@ const updateCategoria = async (req, res) => {
   }
 };
 
+// Verificar si una categoría tiene productos asociados
+const checkCategoriaProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const categoria = await Categoria.findByPk(id);
+    if (!categoria) {
+      return res.status(404).json({ message: "Categoría no encontrada" });
+    }
+
+    const productCount = await Productos_Better.count({
+      where: { IdCategoria: id }
+    });
+
+    res.json({ 
+      categoria: categoria.NombreCategoria,
+      productCount: productCount,
+      canDelete: productCount === 0
+    });
+  } catch (error) {
+    console.error("Error al verificar productos de la categoría:", error);
+    res.status(500).json({ message: "Error al verificar la categoría" });
+  }
+};
+
 // Eliminar categoría
 const deleteCategoria = async (req, res) => {
   try {
@@ -76,6 +102,18 @@ const deleteCategoria = async (req, res) => {
     const categoria = await Categoria.findByPk(id);
     if (!categoria) {
       return res.status(404).json({ message: "Categoría no encontrada" });
+    }
+
+    // Verificar si la categoría tiene productos asociados
+    const productCount = await Productos_Better.count({
+      where: { IdCategoria: id }
+    });
+
+    if (productCount > 0) {
+      return res.status(400).json({ 
+        message: `No se puede eliminar la categoría porque tiene ${productCount} producto(s) asociado(s)`,
+        productCount: productCount
+      });
     }
 
     await categoria.destroy();
@@ -92,4 +130,5 @@ module.exports = {
   createCategoria,
   updateCategoria,
   deleteCategoria,
+  checkCategoriaProducts,
 };

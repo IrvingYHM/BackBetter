@@ -4,6 +4,7 @@ const authControllerProductos = require('../controllers/Categoria.controller');
 
 router.get("/", authControllerProductos.getCategorias);
 router.get("/:id", authControllerProductos.getCategoriaById); 
+router.get("/check-products/:id", authControllerProductos.checkCategoriaProducts);
 router.post("/agregar-categoria", authControllerProductos.createCategoria);
 router.put("/actualizar-categoria", authControllerProductos.updateCategoria); 
 router.delete("/eliminar-categoria", authControllerProductos.deleteCategoria);
