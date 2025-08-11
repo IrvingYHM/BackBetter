@@ -27,6 +27,11 @@ router.put('/actualizar/:IdCliente/direccion', clienteController.getDireccionCli
 router.post('/clientes/:id/password', clienteController.verifyPassword)
 router.post('/:id/password', clienteController.changePassword)
 
+// Ruta de prueba para verificar que el deploy funciona
+router.get('/:id/test-photo', (req, res) => {
+  res.json({ message: 'Endpoint de foto funcionando', id: req.params.id, timestamp: new Date().toISOString() });
+});
+
 // Ruta para subir foto de perfil
 router.post('/:id/upload-photo', clienteController.uploadProfilePhoto);
 
