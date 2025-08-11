@@ -27,6 +27,7 @@ router.put('/actualizar/:IdCliente/direccion', clienteController.getDireccionCli
 router.post('/clientes/:id/password', clienteController.verifyPassword)
 router.post('/:id/password', clienteController.changePassword)
 
-
+// Ruta para subir foto de perfil
+router.post('/:id/upload-photo', clienteController.uploadProfilePhoto);
 
 module.exports = router;

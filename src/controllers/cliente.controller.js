@@ -293,6 +293,92 @@ async function changePassword(req, res) {
 
 
 
+// Controlador para subir foto de perfil
+async function uploadProfilePhoto(req, res) {
+  const { id } = req.params;
+  
+  try {
+    const cliente = await Cliente.findByPk(id);
+    if (!cliente) {
+      return res.status(404).json({ message: "Cliente no encontrado" });
+    }
+
+    if (!req.files || !req.files.foto) {
+      return res.status(400).json({ message: "No se ha seleccionado ninguna imagen." });
+    }
+
+    const file = req.files.foto;
+
+    // Validar que sea una imagen
+    if (!file.mimetype.startsWith("image/")) {
+      return res.status(400).json({ message: "Solo se permiten archivos de imagen." });
+    }
+
+    // Validar tamaño (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      return res.status(400).json({ message: "La imagen no puede superar los 5MB." });
+    }
+
+    const fs = require("fs");
+    const cloudinary = require("../services/cloudinari");
+
+    const tempPath = file.tempFilePath || `./uploads/${file.name}`;
+    await file.mv(tempPath);
+
+    // Eliminar foto anterior si existe
+    if (cliente.foto && cliente.public_id_foto) {
+      try {
+        await cloudinary.uploader.destroy(cliente.public_id_foto);
+      } catch (error) {
+        console.log("Error eliminando foto anterior:", error);
+      }
+    }
+
+    // Subir nueva foto a Cloudinary
+    const result = await cloudinary.uploader.upload(tempPath, {
+      folder: "Perfil/Clientes",
+      transformation: [
+        { width: 400, height: 400, crop: "fill" }, // Redimensionar y recortar
+        { quality: "auto" }, // Optimizar calidad
+        { format: "auto" } // Formato automático
+      ]
+    });
+
+    // Eliminar archivo temporal
+    fs.unlinkSync(tempPath);
+
+    // Actualizar cliente con nueva foto
+    cliente.foto = result.secure_url;
+    cliente.public_id_foto = result.public_id; // Guardar public_id para poder eliminar después
+    await cliente.save();
+
+    // Registro en el log
+    const ip = requestIp.getClientIp(req);
+    await Log.create({
+      ip: ip,
+      url: req.originalUrl,
+      codigo_estado: 200,
+      fecha_hora: new Date(),
+      id_cliente: id,
+      Accion: "Actualización de foto de perfil"
+    });
+
+    res.json({ 
+      message: "Foto de perfil actualizada con éxito", 
+      foto: result.secure_url,
+      cliente: {
+        intClvCliente: cliente.intClvCliente,
+        vchNomCliente: cliente.vchNomCliente,
+        vchAPaterno: cliente.vchAPaterno,
+        foto: cliente.foto
+      }
+    });
+  } catch (error) {
+    console.error("Error al subir foto de perfil:", error);
+    res.status(500).json({ message: "Error interno al subir la foto de perfil." });
+  }
+}
+
 module.exports = {
   getAllClientes,
   createCliente,
@@ -302,7 +388,8 @@ module.exports = {
   getDireccionClientePorId,
   updateDireccionCliente,
   verifyPassword,
-  changePassword
+  changePassword,
+  uploadProfilePhoto
 };
 
 
