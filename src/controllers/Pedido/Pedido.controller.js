@@ -46,6 +46,45 @@ async function createPedido(req, res) {
   }
 }
 
+// Controlador para crear un pedido completo (nuevo sistema)
+async function crearPedidoCompleto(req, res) {
+  const {
+    IdCliente,
+    TotalPe,
+    IdMetodoPago,
+    IdEstado_Pedido,
+    IdEstado_Envio,
+    IdDireccion,
+    IdPaqueteria,
+    IdEmpleado,
+    CostoEnvio,
+    numeroPedido,
+    datosEnvio
+  } = req.body;
+
+  try {
+    const nuevoPedido = await Pedido.create({
+      IdCliente,
+      TotalPe,
+      IdMetodoPago: IdMetodoPago || 1, // Pago contra entrega por defecto
+      IdEstado_Pedido: IdEstado_Pedido || 1, // Pendiente por defecto
+      IdEstado_Envio: IdEstado_Envio || 1, // Pendiente por defecto
+      IdDireccion: IdDireccion || 1,
+      IdPaqueteria: IdPaqueteria || 1,
+      IdEmpleado: IdEmpleado || 1,
+      CostoEnvio: CostoEnvio || 0,
+      Fecha_Hora: new Date(),
+      numeroPedido,
+      datosEnvio: JSON.stringify(datosEnvio)
+    });
+
+    res.status(201).json({ pedido: nuevoPedido });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al crear el pedido completo" });
+  }
+}
+
 async function VerDetallePedido(req, res) {
   try {
     const userId = req.query.userId; // Obtener el userId de la solicitud
@@ -107,9 +146,51 @@ async function eliminarDetallePedido(req, res) {
   }
 }
 
+// Controlador para obtener todos los pedidos de un cliente específico
+async function getPedidosByClienteId(req, res) {
+  try {
+    const { clienteId } = req.params;
+    
+    const pedidos = await Pedido.findAll({
+      where: { IdCliente: clienteId },
+      include: [
+        {
+          model: DetallePedido,
+          as: "detalles",
+          include: [
+            {
+              model: Productos,
+              as: "Producto",
+              attributes: ['IdProducto', 'vchNombreProducto', 'vchNomImagen', 'Precio']
+            }
+          ]
+        },
+        {
+          model: Cliente,
+          as: "cliente",
+          attributes: ['vchNombre', 'vchApellidos', 'vchTelefono', 'vchCorreo']
+        },
+        {
+          model: DireccionCliente,
+          as: "direccion",
+          attributes: ['Estado', 'Municipio', 'Colonia', 'Calle', 'NumExt', 'NumInt', 'Referencia']
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+
+    res.json(pedidos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener los pedidos del cliente" });
+  }
+}
+
 module.exports = {
   getAllPedidos,
   createPedido,
+  crearPedidoCompleto,
   VerDetallePedido,
-  eliminarDetallePedido
+  eliminarDetallePedido,
+  getPedidosByClienteId
 };
