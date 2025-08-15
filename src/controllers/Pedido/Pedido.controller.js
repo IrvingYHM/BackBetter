@@ -33,13 +33,18 @@ async function createPedido(req, res) {
       res.status(200).json(pedidoExistente);
     } else {
       // Crear un nuevo pedido si el cliente no tiene uno
+      const numeroGuia = Math.floor(Math.random() * 1000000) + 100000; // Generar número de guía temporal
+      
       const nuevoPedido = await Pedido.create({
         IdCliente,
         IdEmpleado: IdEmpleado || 1,
         Fecha_Hora: new Date(),
+        Numero_Guia: numeroGuia,
+        TotalPe: 0, // Se actualizará cuando se calcule el total
         IdMetodoPago: 1, // Pago contra entrega por defecto
         IdEstado_Pedido: 1, // Pendiente
         IdEstado_Envio: 1, // Pendiente
+        IdDireccion: 1, // Se actualizará con la dirección real
         IdPaqueteria: 1 // Paquetería por defecto
       });
       res.status(201).json(nuevoPedido);

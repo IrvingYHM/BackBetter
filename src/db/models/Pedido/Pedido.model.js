@@ -28,40 +28,35 @@ Pedido.init({
   },
   Numero_Guia: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: false
   },
   TotalPe: {
     type: DataTypes.FLOAT,
-    allowNull: true
+    allowNull: false
   },
   IdMetodoPago: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 1
+    allowNull: false
   },
   IdEstado_Pedido: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 1
+    allowNull: false
   },
   IdEstado_Envio: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 1
+    allowNull: false
   },
   IdDireccion: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: false
   },
   IdPaqueteria: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 1
+    allowNull: false
   },
   IdEmpleado: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-    defaultValue: 1
+    allowNull: false
   }
 }, {
   sequelize,
