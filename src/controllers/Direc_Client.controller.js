@@ -49,9 +49,56 @@ async function createDirec_Client(req, res) {
   }
 }
 
+// Controlador para actualizar una dirección de cliente
+async function updateDirec_Client(req, res) {
+  const { IdDirec_Client } = req.params;
+  const {
+    Estado,
+    CP,
+    Municipio,
+    Colonia,
+    Calle,
+    NumExt,
+    NumInt,
+    Referencia,
+    IdCliente,
+  } = req.body;
+
+  try {
+    const direccionCliente = await DireccionCliente.findOne({
+      where: { IdDirec_Client },
+    });
+
+    if (direccionCliente) {
+      // Update the address with new data
+      await direccionCliente.update({
+        Estado,
+        CP,
+        Municipio,
+        Colonia,
+        Calle,
+        NumExt,
+        NumInt,
+        Referencia,
+        IdCliente,
+      });
+
+      res.json(direccionCliente);
+    } else {
+      res.status(404).json({ message: "Dirección no encontrada" });
+    }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Error al actualizar la dirección del cliente" });
+  }
+}
+
 module.exports = {
   getAllDirec_Clientes,
   createDirec_Client,
+  updateDirec_Client,
 };
 
 /* DireccionCliente.belongsTo(Cliente, { foreignKey: 'IdCliente', as: 'idcliente' }); */

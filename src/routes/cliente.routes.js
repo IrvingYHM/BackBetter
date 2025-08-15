@@ -22,7 +22,7 @@ router.post("/Verificacion_codigo", recuperarController.verificarCodigo);
 router.get('/find/:codigoAle', clienteController.findClienteByCodigoAle); // Nueva ruta para buscar cliente por codigoAle
 // Ruta para obtener la dirección de un cliente específico por IdCliente
 router.get('/clientes/:IdCliente/direccion', clienteController.getDireccionClientePorId);
-router.put('/actualizar/:IdCliente/direccion', clienteController.getDireccionClientePorId);
+router.put('/actualizar/:IdCliente/direccion', clienteController.updateDireccionCliente);
 //Para saber la contraseña de la persona
 router.post('/clientes/:id/password', clienteController.verifyPassword)
 router.post('/:id/password', clienteController.changePassword)

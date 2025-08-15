@@ -271,7 +271,7 @@ async function getDireccionClientePorId(req, res) {
 // Controlador para actualizar la dirección de un cliente por su IdCliente
 async function updateDireccionCliente(req, res) {
   const { IdCliente } = req.params;
-  const { calle, numero, ciudad, estado, codigoPostal } = req.body; // Asegúrate de ajustar estos campos a tu modelo
+  const { Estado, CP, Municipio, Colonia, Calle, NumExt, NumInt, Referencia } = req.body;
 
   try {
     const direccionCliente = await DireccionCliente.findOne({
@@ -279,13 +279,17 @@ async function updateDireccionCliente(req, res) {
     });
 
     if (direccionCliente) {
-      direccionCliente.calle = calle;
-      direccionCliente.numero = numero;
-      direccionCliente.ciudad = ciudad;
-      direccionCliente.estado = estado;
-      direccionCliente.codigoPostal = codigoPostal;
-
-      await direccionCliente.save();
+      // Update using the correct field names from the model
+      await direccionCliente.update({
+        Estado,
+        CP,
+        Municipio,
+        Colonia,
+        Calle,
+        NumExt,
+        NumInt,
+        Referencia
+      });
 
       res.json(direccionCliente);
     } else {

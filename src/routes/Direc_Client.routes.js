@@ -6,9 +6,10 @@ const direc_ClientController = require("../controllers/Direc_Client.controller")
 router.get("/", direc_ClientController.getAllDirec_Clientes);
 /* router.get("/cliente/", direc_ClientController.findClienteByDireccion); */
 
-
-
 // Ruta para crear una nueva dirección de cliente
 router.post("/", direc_ClientController.createDirec_Client);
+
+// Ruta para actualizar una dirección de cliente
+router.put("/:IdDirec_Client", direc_ClientController.updateDirec_Client);
 
 module.exports = router;
