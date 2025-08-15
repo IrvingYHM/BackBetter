@@ -148,9 +148,10 @@ async function updateCliente(req, res) {
       await file.mv(tempPath);
 
       // Eliminar foto anterior si existe
-      if (cliente.foto && cliente.public_id_foto) {
+      if (cliente.foto) {
         try {
-          await cloudinary.uploader.destroy(cliente.public_id_foto);
+          // Note: Without public_id_foto field, we can't delete from Cloudinary
+          console.log("Foto anterior no puede ser eliminada de Cloudinary sin public_id");
         } catch (error) {
           console.log("Error eliminando foto anterior:", error);
         }
@@ -171,7 +172,6 @@ async function updateCliente(req, res) {
 
       // Actualizar datos de la foto
       cliente.foto = result.secure_url;
-      cliente.public_id_foto = result.public_id;
 
       // Registro en el log para foto
       const ip = requestIp.getClientIp(req);
@@ -387,9 +387,10 @@ async function uploadProfilePhoto(req, res) {
     await file.mv(tempPath);
 
     // Eliminar foto anterior si existe
-    if (cliente.foto && cliente.public_id_foto) {
+    if (cliente.foto) {
       try {
-        await cloudinary.uploader.destroy(cliente.public_id_foto);
+        // Note: Without public_id_foto field, we can't delete from Cloudinary
+        console.log("Foto anterior no puede ser eliminada de Cloudinary sin public_id");
       } catch (error) {
         console.log("Error eliminando foto anterior:", error);
       }
@@ -410,7 +411,6 @@ async function uploadProfilePhoto(req, res) {
 
     // Actualizar cliente con nueva foto
     cliente.foto = result.secure_url;
-    cliente.public_id_foto = result.public_id; // Guardar public_id para poder eliminar después
     await cliente.save();
 
     // Registro en el log
