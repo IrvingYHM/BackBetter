@@ -35,8 +35,12 @@ async function createPedido(req, res) {
       // Crear un nuevo pedido si el cliente no tiene uno
       const nuevoPedido = await Pedido.create({
         IdCliente,
-        IdEmpleado,
+        IdEmpleado: IdEmpleado || 1,
         Fecha_Hora: new Date(),
+        IdMetodoPago: 1, // Pago contra entrega por defecto
+        IdEstado_Pedido: 1, // Pendiente
+        IdEstado_Envio: 1, // Pendiente
+        IdPaqueteria: 1 // Paquetería por defecto
       });
       res.status(201).json(nuevoPedido);
     }
