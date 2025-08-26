@@ -14,12 +14,12 @@ Direc_Client.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    Estado: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-    },
     CP: {
       type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    Estado: {
+      type: DataTypes.STRING(50),
       allowNull: false,
     },
     Municipio: {

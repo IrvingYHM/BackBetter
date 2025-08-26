@@ -102,7 +102,7 @@ app.use("/detallePedido", DetallePedido);
 app.use("/", Logs);
 app.use("/", Paqueteria);
 app.use("/", Valoracion);
-app.use("/", Direc_Empleado);
+app.use("/direccion-empleados", Direc_Empleado);
 app.use("/", EstadoEnvio);
 app.use("/", EstadoPedido);
 app.use("/", Encuesta);

@@ -1,7 +1,6 @@
 const DireccionCliente = require("../db/models/Direc_Client.model");
 const Cliente = require('./cliente.controller'); // Importa el modelo de Categoria
 
-
 // Controlador para obtener todas las direcciones de los clientes
 async function getAllDirec_Clientes(req, res) {
   try {
